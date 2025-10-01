@@ -76,8 +76,16 @@ serve(async (req) => {
     const data = await response.json();
     const content = data.choices[0].message.content;
     
+    // Clean markdown code blocks that LLMs often add
+    let cleanContent = content.trim();
+    
+    // Remove markdown code blocks (```json or ``` at start/end)
+    if (cleanContent.startsWith('```')) {
+      cleanContent = cleanContent.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+    }
+    
     // Parse the JSON response
-    const result = JSON.parse(content);
+    const result = JSON.parse(cleanContent);
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
