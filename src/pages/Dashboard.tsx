@@ -23,10 +23,13 @@ const Dashboard = () => {
   const [newSubject, setNewSubject] = useState("");
   const [creating, setCreating] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [dueCardsCount, setDueCardsCount] = useState(0);
+  const [totalCardsCount, setTotalCardsCount] = useState(0);
 
   useEffect(() => {
     checkAuth();
     fetchLearningPaths();
+    fetchReviewStats();
   }, []);
 
   const checkAuth = async () => {
@@ -49,6 +52,31 @@ const Dashboard = () => {
       toast.error("Failed to load learning paths");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReviewStats = async () => {
+    try {
+      const now = new Date().toISOString();
+      
+      // Get total cards being tracked
+      const { count: totalCount, error: totalError } = await supabase
+        .from("user_progress")
+        .select("*", { count: "exact", head: true });
+
+      if (totalError) throw totalError;
+      setTotalCardsCount(totalCount || 0);
+
+      // Get cards due for review
+      const { count: dueCount, error: dueError } = await supabase
+        .from("user_progress")
+        .select("*", { count: "exact", head: true })
+        .lte("next_review", now);
+
+      if (dueError) throw dueError;
+      setDueCardsCount(dueCount || 0);
+    } catch (error: any) {
+      console.error("Failed to fetch review stats:", error);
     }
   };
 
@@ -144,12 +172,23 @@ const Dashboard = () => {
               <CardDescription>Review and reinforce knowledge</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button 
-                className="w-full" 
-                onClick={() => navigate("/review")}
-              >
-                Review Cards
-              </Button>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Due now:</span>
+                  <span className="font-semibold text-lg">{dueCardsCount}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Total tracked:</span>
+                  <span className="font-medium">{totalCardsCount}</span>
+                </div>
+                <Button 
+                  className="w-full" 
+                  onClick={() => navigate("/review")}
+                  disabled={dueCardsCount === 0}
+                >
+                  {dueCardsCount === 0 ? "No Cards Due" : `Review ${dueCardsCount} Card${dueCardsCount !== 1 ? 's' : ''}`}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
