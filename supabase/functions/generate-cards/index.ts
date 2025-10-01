@@ -22,7 +22,10 @@ serve(async (req) => {
 
     const systemPrompt = generateReading
       ? `You are an expert educator. Create engaging reading content and learning cards for the given topic.
-        Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
+        
+        CRITICAL: You MUST return BOTH "reading" AND "cards" fields in your response. Do not omit either field.
+        
+        Return ONLY valid JSON (no markdown, no code blocks) with this EXACT structure:
         {
           "reading": "An engaging, informative 2-6 minute read about the topic. Make it exciting and accessible! Include 3-5 fun and surprising facts throughout, each with a WEIRD, FUNNY, or RIDICULOUS mnemonic device to help remember it. The mnemonics should be memorable through absurdity or humor - think silly acronyms, bizarre mental images, or outrageous associations. Format facts in bold using **text** and italicize mnemonic devices using *text*.",
           "cards": [
@@ -46,7 +49,8 @@ serve(async (req) => {
             }
           ]
         }
-        Mix flashcards, quiz questions, and fill-in-the-blank questions. For quiz questions, include 4 options with the answer being one of them.`
+        
+        IMPORTANT: Always include BOTH the reading content AND the cards array. Mix flashcards, quiz questions, and fill-in-the-blank questions. For quiz questions, include 4 options with the answer being one of them.`
       : `You are an expert educator. Create learning cards for the given topic.
         Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
         {
