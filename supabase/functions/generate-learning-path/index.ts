@@ -69,13 +69,19 @@ serve(async (req) => {
 
     const data = await response.json();
     const content = data.choices[0].message.content;
-    
-    // Parse the JSON response
-    const learningPath = JSON.parse(content);
 
-    return new Response(JSON.stringify({ learningPath }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    // Clean markdown code blocks that LLMs often add
+    const cleanContent = content
+      .replace(/```json\n?/g, '')
+      .replace(/```\n?/g, '')
+      .trim();
+
+// Parse the JSON response
+const learningPath = JSON.parse(cleanContent);
+
+return new Response(JSON.stringify({ learningPath }), {
+  headers: { ...corsHeaders, "Content-Type": "application/json" },
+});
   } catch (error) {
     console.error("Error in generate-learning-path:", error);
     const message = error instanceof Error ? error.message : "Unknown error";
