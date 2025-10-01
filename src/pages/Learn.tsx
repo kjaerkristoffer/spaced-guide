@@ -180,11 +180,20 @@ const Learn = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="prose prose-lg dark:prose-invert max-w-none">
-                {readingContent.split('\n\n').map((paragraph, index) => (
-                  <p key={index} className="text-base leading-relaxed mb-4">
-                    {paragraph}
-                  </p>
-                ))}
+                {readingContent.split('\n\n').map((paragraph, index) => {
+                  // Convert markdown bold (**text**) and italic (*text*) to HTML
+                  const formattedParagraph = paragraph
+                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.+?)\*/g, '<em>$1</em>');
+                  
+                  return (
+                    <p 
+                      key={index} 
+                      className="text-base leading-relaxed mb-4"
+                      dangerouslySetInnerHTML={{ __html: formattedParagraph }}
+                    />
+                  );
+                })}
               </div>
               
               <div className="pt-6 border-t">
