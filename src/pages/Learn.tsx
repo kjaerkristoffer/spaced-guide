@@ -163,12 +163,14 @@ const Learn = () => {
         <div className="py-8">
           {currentCard.card_type === "flashcard" ? (
             <FlashCard
+              key={currentCard.id}
               question={currentCard.question}
               answer={currentCard.answer}
               onRate={handleRate}
             />
           ) : (
             <QuizCard
+              key={currentCard.id}
               question={currentCard.question}
               answer={currentCard.answer}
               options={currentCard.options || []}
