@@ -105,6 +105,8 @@ serve(async (req) => {
     const data = await response.json();
     const content = data.choices[0].message.content;
     
+    console.log("Raw AI response:", content.substring(0, 500)); // Log first 500 chars
+    
     // Clean markdown code blocks that LLMs often add
     let cleanContent = content.trim();
     
@@ -113,8 +115,16 @@ serve(async (req) => {
       cleanContent = cleanContent.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
     }
     
+    console.log("Cleaned content:", cleanContent.substring(0, 500)); // Log first 500 chars
+    
     // Parse the JSON response
     const result = JSON.parse(cleanContent);
+    
+    console.log("Parsed result structure:", { 
+      hasReading: !!result.reading, 
+      hasCards: !!result.cards,
+      cardsLength: result.cards?.length 
+    });
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
