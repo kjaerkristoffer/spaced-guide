@@ -108,6 +108,26 @@ const LearningPath = () => {
   const startTopic = async (topic: Topic) => {
     setGeneratingCards(topic.title);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Check if cards already exist for this topic
+      const { data: existingCards, error: checkError } = await supabase
+        .from("cards")
+        .select("id")
+        .eq("learning_path_id", id)
+        .eq("topic", topic.title)
+        .eq("user_id", user?.id);
+
+      if (checkError) throw checkError;
+
+      // If cards already exist, just navigate to the learning page
+      if (existingCards && existingCards.length > 0) {
+        toast.success("Resuming topic...");
+        navigate(`/learn?path=${id}&topic=${encodeURIComponent(topic.title)}`);
+        setGeneratingCards(null);
+        return;
+      }
+
       // Generate cards and reading content for this topic
       const { data: functionData, error: functionError } = await supabase.functions.invoke(
         "generate-cards",
@@ -117,7 +137,6 @@ const LearningPath = () => {
       if (functionError) throw functionError;
 
       // Save cards to database
-      const { data: { user } } = await supabase.auth.getUser();
       const cardsToInsert = functionData.cards.map((card: any) => ({
         learning_path_id: id,
         user_id: user?.id,
