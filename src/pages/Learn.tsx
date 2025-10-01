@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import FlashCard from "@/components/FlashCard";
 import QuizCard from "@/components/QuizCard";
+import FillBlankCard from "@/components/FillBlankCard";
 
 interface Card {
   id: string;
@@ -26,6 +28,9 @@ const Learn = () => {
   const [cards, setCards] = useState<Card[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [readingContent, setReadingContent] = useState<string>("");
+  const [showReading, setShowReading] = useState(true);
+  const [readingTime, setReadingTime] = useState(0);
 
   useEffect(() => {
     if (!pathId || !topic) {
@@ -52,6 +57,26 @@ const Learn = () => {
       }
 
       setCards(data as Card[]);
+
+      // Fetch reading content from learning path
+      const { data: pathData } = await supabase
+        .from("learning_paths")
+        .select("structure")
+        .eq("id", pathId)
+        .single();
+
+      if (pathData) {
+        const structure = pathData.structure as any;
+        const topicData = structure.topics?.find((t: any) => t.title === topic);
+        if (topicData?.readingContent) {
+          setReadingContent(topicData.readingContent);
+          // Calculate reading time (assuming 200 words per minute)
+          const wordCount = topicData.readingContent.split(/\s+/).length;
+          setReadingTime(Math.ceil(wordCount / 200));
+        } else {
+          setShowReading(false);
+        }
+      }
     } catch (error: any) {
       toast.error("Failed to load cards");
       navigate("/dashboard");
@@ -130,6 +155,54 @@ const Learn = () => {
     );
   }
 
+  if (showReading && readingContent) {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="border-b border-border">
+          <div className="container mx-auto px-4 py-4">
+            <Button variant="ghost" onClick={() => navigate(`/path/${pathId}`)}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Exit
+            </Button>
+          </div>
+        </header>
+
+        <div className="container max-w-3xl mx-auto px-4 py-8">
+          <Card className="shadow-[var(--shadow-elevated)]">
+            <CardHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <BookOpen className="w-6 h-6 text-primary" />
+                <CardTitle className="text-2xl">{topic}</CardTitle>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {readingTime} min read · {cards.length} practice questions follow
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="prose prose-lg dark:prose-invert max-w-none">
+                {readingContent.split('\n\n').map((paragraph, index) => (
+                  <p key={index} className="text-base leading-relaxed mb-4">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+              
+              <div className="pt-6 border-t">
+                <Button 
+                  onClick={() => setShowReading(false)} 
+                  className="w-full"
+                  size="lg"
+                >
+                  Start Practice Questions ({cards.length} questions)
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   const currentCard = cards[currentIndex];
   const progress = ((currentIndex + 1) / cards.length) * 100;
 
@@ -168,12 +241,19 @@ const Learn = () => {
               answer={currentCard.answer}
               onRate={handleRate}
             />
-          ) : (
+          ) : currentCard.card_type === "quiz" ? (
             <QuizCard
               key={currentCard.id}
               question={currentCard.question}
               answer={currentCard.answer}
               options={currentCard.options || []}
+              onRate={handleRate}
+            />
+          ) : (
+            <FillBlankCard
+              key={currentCard.id}
+              question={currentCard.question}
+              answer={currentCard.answer}
               onRate={handleRate}
             />
           )}

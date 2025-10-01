@@ -11,14 +11,61 @@ serve(async (req) => {
   }
 
   try {
-    const { topic, count = 5 } = await req.json();
+    const { topic, count = 5, generateReading = false } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log("Generating cards for topic:", topic);
+    console.log("Generating content for topic:", topic, "Reading:", generateReading);
+
+    const systemPrompt = generateReading
+      ? `You are an expert educator. Create engaging reading content and learning cards for the given topic.
+        Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
+        {
+          "reading": "An engaging, informative 1-3 minute read about the topic. Make it exciting and accessible!",
+          "cards": [
+            {
+              "question": "Question text",
+              "answer": "Answer text",
+              "type": "flashcard",
+              "options": null
+            },
+            {
+              "question": "Quiz question",
+              "answer": "Correct answer",
+              "type": "quiz",
+              "options": ["Option 1", "Option 2", "Option 3", "Option 4"]
+            },
+            {
+              "question": "Complete this: The capital of France is ___",
+              "answer": "Paris",
+              "type": "fill-blank",
+              "options": null
+            }
+          ]
+        }
+        Mix flashcards, quiz questions, and fill-in-the-blank questions. For quiz questions, include 4 options with the answer being one of them.`
+      : `You are an expert educator. Create learning cards for the given topic.
+        Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
+        {
+          "cards": [
+            {
+              "question": "Question text",
+              "answer": "Answer text",
+              "type": "flashcard",
+              "options": null
+            },
+            {
+              "question": "Quiz question",
+              "answer": "Correct answer",
+              "type": "quiz",
+              "options": ["Option 1", "Option 2", "Option 3", "Option 4"]
+            }
+          ]
+        }
+        Mix flashcards and quiz questions. For quiz questions, include 4 options with the answer being one of them.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -31,29 +78,11 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are an expert educator. Create learning cards for the given topic.
-            Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
-            {
-              "cards": [
-                {
-                  "question": "Question text",
-                  "answer": "Answer text",
-                  "type": "flashcard",
-                  "options": null
-                },
-                {
-                  "question": "Quiz question",
-                  "answer": "Correct answer",
-                  "type": "quiz",
-                  "options": ["Option 1", "Option 2", "Option 3", "Option 4"]
-                }
-              ]
-            }
-            Mix flashcards and quiz questions. For quiz questions, include 4 options with the answer being one of them.`
+            content: systemPrompt
           },
           {
             role: "user",
-            content: `Create ${count} learning cards (mix of flashcards and quizzes) for: ${topic}`
+            content: `Create ${count} learning cards (mix of flashcards, quizzes, and fill-in-the-blank) for: ${topic}`
           }
         ],
       }),

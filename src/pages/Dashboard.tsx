@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2 } from "lucide-react";
+import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 
 interface LearningPath {
   id: string;
@@ -25,11 +26,13 @@ const Dashboard = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dueCardsCount, setDueCardsCount] = useState(0);
   const [totalCardsCount, setTotalCardsCount] = useState(0);
+  const [pathProgress, setPathProgress] = useState<Record<string, number>>({});
 
   useEffect(() => {
     checkAuth();
     fetchLearningPaths();
     fetchReviewStats();
+    fetchPathProgress();
   }, []);
 
   const checkAuth = async () => {
@@ -80,6 +83,50 @@ const Dashboard = () => {
     }
   };
 
+  const fetchPathProgress = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Get all cards grouped by path
+      const { data: allCards, error: cardsError } = await supabase
+        .from("cards")
+        .select("id, learning_path_id")
+        .eq("user_id", user?.id);
+
+      if (cardsError) throw cardsError;
+
+      // Get all progress
+      const { data: progress, error: progressError } = await supabase
+        .from("user_progress")
+        .select("card_id")
+        .eq("user_id", user?.id);
+
+      if (progressError) throw progressError;
+
+      const reviewedCardIds = new Set(progress?.map(p => p.card_id) || []);
+      const pathStats: Record<string, { total: number; reviewed: number }> = {};
+
+      allCards?.forEach(card => {
+        if (!pathStats[card.learning_path_id]) {
+          pathStats[card.learning_path_id] = { total: 0, reviewed: 0 };
+        }
+        pathStats[card.learning_path_id].total++;
+        if (reviewedCardIds.has(card.id)) {
+          pathStats[card.learning_path_id].reviewed++;
+        }
+      });
+
+      const progressPct: Record<string, number> = {};
+      Object.entries(pathStats).forEach(([pathId, stats]) => {
+        progressPct[pathId] = stats.total > 0 ? (stats.reviewed / stats.total) * 100 : 0;
+      });
+
+      setPathProgress(progressPct);
+    } catch (error: any) {
+      console.error("Failed to fetch path progress:", error);
+    }
+  };
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate("/");
@@ -119,6 +166,7 @@ const Dashboard = () => {
       setNewSubject("");
       setDialogOpen(false);
       fetchLearningPaths();
+      fetchPathProgress();
     } catch (error: any) {
       toast.error(error.message || "Failed to create learning path");
     } finally {
@@ -253,25 +301,45 @@ const Dashboard = () => {
           </Card>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {learningPaths.map((path) => (
-              <Card 
-                key={path.id} 
-                className="cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)]"
-                onClick={() => navigate(`/path/${path.id}`)}
-              >
-                <CardHeader>
-                  <CardTitle>{path.subject}</CardTitle>
-                  <CardDescription>
-                    {path.structure?.topics?.length || 0} topics
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    Created {new Date(path.created_at).toLocaleDateString()}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+            {learningPaths.map((path) => {
+              const progress = pathProgress[path.id] || 0;
+              const isComplete = progress === 100;
+              
+              return (
+                <Card 
+                  key={path.id} 
+                  className={`cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] ${
+                    isComplete ? 'border-green-500 border-2' : ''
+                  }`}
+                  onClick={() => navigate(`/path/${path.id}`)}
+                >
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      {path.subject}
+                      {isComplete && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                    </CardTitle>
+                    <CardDescription>
+                      {path.structure?.topics?.length || 0} topics
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">
+                        Created {new Date(path.created_at).toLocaleDateString()}
+                      </p>
+                      {progress > 0 && (
+                        <div>
+                          <Progress value={progress} className="h-1.5" />
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {Math.round(progress)}% complete
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </main>
