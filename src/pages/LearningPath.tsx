@@ -136,6 +136,12 @@ const LearningPath = () => {
 
       if (functionError) throw functionError;
 
+      // Validate response structure
+      if (!functionData || !functionData.cards || !Array.isArray(functionData.cards)) {
+        console.error("Invalid response from generate-cards:", functionData);
+        throw new Error("Failed to generate cards. Please try again.");
+      }
+
       // Save cards to database
       const cardsToInsert = functionData.cards.map((card: any) => ({
         learning_path_id: id,
