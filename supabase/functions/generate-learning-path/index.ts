@@ -71,12 +71,10 @@ serve(async (req) => {
     const content = data.choices[0].message.content;
 
     // Clean markdown code blocks that LLMs often add
-    let cleanContent = content.trim();
-    
-    // Remove markdown code blocks (```json or ``` at start/end)
-    if (cleanContent.startsWith('```')) {
-      cleanContent = cleanContent.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
-    }
+    const cleanContent = content
+      .replace(/```json\n?/g, '')
+      .replace(/```\n?/g, '')
+      .trim();
 
     // Parse the JSON response
     const learningPath = JSON.parse(cleanContent);
