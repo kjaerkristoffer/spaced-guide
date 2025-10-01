@@ -24,7 +24,7 @@ serve(async (req) => {
       ? `You are an expert educator. Create engaging reading content and learning cards for the given topic.
         Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
         {
-          "reading": "An engaging, informative 1-3 minute read about the topic. Make it exciting and accessible!",
+          "reading": "An engaging, informative 2-6 minute read about the topic. Make it exciting and accessible! Include 3-5 fun and surprising facts throughout, each with a WEIRD, FUNNY, or RIDICULOUS mnemonic device to help remember it. The mnemonics should be memorable through absurdity or humor - think silly acronyms, bizarre mental images, or outrageous associations. Format facts in bold using **text** and italicize mnemonic devices using *text*.",
           "cards": [
             {
               "question": "Question text",
