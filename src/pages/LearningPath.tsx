@@ -42,9 +42,16 @@ const LearningPath = () => {
         .from("learning_paths")
         .select("*")
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      
+      if (!data) {
+        toast.error("Læringssti ikke fundet");
+        navigate("/dashboard");
+        return;
+      }
+      
       setPath(data as unknown as LearningPath);
     } catch (error: any) {
       toast.error("Kunne ikke indlæse læringssti");
@@ -66,24 +73,25 @@ const LearningPath = () => {
 
       if (cardsError) throw cardsError;
 
-      // Get progress for these cards
+      // Get progress for cards with mastery_level >= 3 (properly learned)
       const { data: progress, error: progressError } = await supabase
         .from("user_progress")
-        .select("card_id")
-        .eq("user_id", user?.id);
+        .select("card_id, mastery_level")
+        .eq("user_id", user?.id)
+        .gte("mastery_level", 3);
 
       if (progressError) throw progressError;
 
-      const reviewedCardIds = new Set(progress?.map(p => p.card_id) || []);
-      const topicStats: Record<string, { total: number; reviewed: number }> = {};
+      const masteredCardIds = new Set(progress?.map(p => p.card_id) || []);
+      const topicStats: Record<string, { total: number; mastered: number }> = {};
 
       allCards?.forEach(card => {
         if (!topicStats[card.topic]) {
-          topicStats[card.topic] = { total: 0, reviewed: 0 };
+          topicStats[card.topic] = { total: 0, mastered: 0 };
         }
         topicStats[card.topic].total++;
-        if (reviewedCardIds.has(card.id)) {
-          topicStats[card.topic].reviewed++;
+        if (masteredCardIds.has(card.id)) {
+          topicStats[card.topic].mastered++;
         }
       });
 
@@ -91,7 +99,7 @@ const LearningPath = () => {
       const progress_pct: Record<string, number> = {};
 
       Object.entries(topicStats).forEach(([topic, stats]) => {
-        const pct = stats.total > 0 ? (stats.reviewed / stats.total) * 100 : 0;
+        const pct = stats.total > 0 ? (stats.mastered / stats.total) * 100 : 0;
         progress_pct[topic] = pct;
         if (pct === 100) {
           completed.add(topic);
