@@ -3,12 +3,22 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2, CheckCircle2 } from "lucide-react";
+import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2, CheckCircle2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface LearningPath {
   id: string;
@@ -27,6 +37,8 @@ const Dashboard = () => {
   const [dueCardsCount, setDueCardsCount] = useState(0);
   const [totalCardsCount, setTotalCardsCount] = useState(0);
   const [pathProgress, setPathProgress] = useState<Record<string, number>>({});
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [pathToDelete, setPathToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     checkAuth();
@@ -174,6 +186,28 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeletePath = async () => {
+    if (!pathToDelete) return;
+    
+    try {
+      const { error } = await supabase
+        .from("learning_paths")
+        .delete()
+        .eq("id", pathToDelete);
+
+      if (error) throw error;
+
+      toast.success("Læringssti slettet!");
+      setDeleteDialogOpen(false);
+      setPathToDelete(null);
+      fetchLearningPaths();
+      fetchPathProgress();
+      fetchReviewStats();
+    } catch (error: any) {
+      toast.error(error.message || "Kunne ikke slette læringssti");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border">
@@ -308,21 +342,36 @@ const Dashboard = () => {
               return (
                 <Card 
                   key={path.id} 
-                  className={`cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] ${
+                  className={`transition-all hover:shadow-[var(--shadow-elevated)] ${
                     isComplete ? 'border-green-500 border-2' : ''
                   }`}
-                  onClick={() => navigate(`/path/${path.id}`)}
                 >
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      {path.subject}
-                      {isComplete && <CheckCircle2 className="w-5 h-5 text-green-500" />}
-                    </CardTitle>
-                    <CardDescription>
-                      {path.structure?.topics?.length || 0} emner
-                    </CardDescription>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 cursor-pointer" onClick={() => navigate(`/path/${path.id}`)}>
+                        <CardTitle className="flex items-center gap-2">
+                          {path.subject}
+                          {isComplete && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                        </CardTitle>
+                        <CardDescription>
+                          {path.structure?.topics?.length || 0} emner
+                        </CardDescription>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPathToDelete(path.id);
+                          setDeleteDialogOpen(true);
+                        }}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="cursor-pointer" onClick={() => navigate(`/path/${path.id}`)}>
                     <div className="space-y-2">
                       <p className="text-sm text-muted-foreground">
                         Oprettet {new Date(path.created_at).toLocaleDateString('da-DK')}
@@ -343,6 +392,23 @@ const Dashboard = () => {
           </div>
         )}
       </main>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Dette vil permanent slette læringsstien og alle tilhørende kort og fremskridt. Denne handling kan ikke fortrydes.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPathToDelete(null)}>Annuller</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeletePath} className="bg-destructive hover:bg-destructive/90">
+              Slet
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
