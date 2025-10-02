@@ -232,6 +232,7 @@ const LearningPath = () => {
           {path?.structure?.topics?.map((topic: Topic, index: number) => {
             const isCompleted = completedTopics.has(topic.title);
             const progress = topicProgress[topic.title] || 0;
+            const isInProgress = progress > 0 && progress < 100;
             
             return (
               <Card 
@@ -276,6 +277,7 @@ const LearningPath = () => {
                     onClick={() => startTopic(topic)}
                     disabled={generatingCards === topic.title}
                     className="w-full sm:w-auto"
+                    variant={isInProgress ? "secondary" : "default"}
                   >
                     {generatingCards === topic.title ? (
                       <>
@@ -285,7 +287,7 @@ const LearningPath = () => {
                     ) : (
                       <>
                         <Play className="w-4 h-4 mr-2" />
-                        {isCompleted ? 'Gennemgå Emne' : 'Start Læring'}
+                        {isCompleted ? 'Gennemgå Emne' : isInProgress ? 'Fortsæt Læring' : 'Start Læring'}
                       </>
                     )}
                   </Button>
