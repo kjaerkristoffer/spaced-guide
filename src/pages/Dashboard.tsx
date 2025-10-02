@@ -106,30 +106,31 @@ const Dashboard = () => {
 
       if (cardsError) throw cardsError;
 
-      // Get all progress
+      // Get progress for cards with mastery_level >= 3 (properly learned)
       const { data: progress, error: progressError } = await supabase
         .from("user_progress")
-        .select("card_id")
-        .eq("user_id", user?.id);
+        .select("card_id, mastery_level")
+        .eq("user_id", user?.id)
+        .gte("mastery_level", 3);
 
       if (progressError) throw progressError;
 
-      const reviewedCardIds = new Set(progress?.map(p => p.card_id) || []);
-      const pathStats: Record<string, { total: number; reviewed: number }> = {};
+      const masteredCardIds = new Set(progress?.map(p => p.card_id) || []);
+      const pathStats: Record<string, { total: number; mastered: number }> = {};
 
       allCards?.forEach(card => {
         if (!pathStats[card.learning_path_id]) {
-          pathStats[card.learning_path_id] = { total: 0, reviewed: 0 };
+          pathStats[card.learning_path_id] = { total: 0, mastered: 0 };
         }
         pathStats[card.learning_path_id].total++;
-        if (reviewedCardIds.has(card.id)) {
-          pathStats[card.learning_path_id].reviewed++;
+        if (masteredCardIds.has(card.id)) {
+          pathStats[card.learning_path_id].mastered++;
         }
       });
 
       const progressPct: Record<string, number> = {};
       Object.entries(pathStats).forEach(([pathId, stats]) => {
-        progressPct[pathId] = stats.total > 0 ? (stats.reviewed / stats.total) * 100 : 0;
+        progressPct[pathId] = stats.total > 0 ? (stats.mastered / stats.total) * 100 : 0;
       });
 
       setPathProgress(progressPct);
