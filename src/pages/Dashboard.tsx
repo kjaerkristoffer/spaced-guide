@@ -98,10 +98,10 @@ const Dashboard = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      // Get all cards grouped by path
+      // Get all cards with their topics grouped by path
       const { data: allCards, error: cardsError } = await supabase
         .from("cards")
-        .select("id, learning_path_id")
+        .select("id, learning_path_id, topic")
         .eq("user_id", user?.id);
 
       if (cardsError) throw cardsError;
@@ -115,21 +115,36 @@ const Dashboard = () => {
       if (progressError) throw progressError;
 
       const reviewedCardIds = new Set(progress?.map(p => p.card_id) || []);
-      const pathStats: Record<string, { total: number; reviewed: number }> = {};
+      
+      // Group cards by path and topic
+      const pathTopicStats: Record<string, Record<string, { total: number; reviewed: number }>> = {};
 
       allCards?.forEach(card => {
-        if (!pathStats[card.learning_path_id]) {
-          pathStats[card.learning_path_id] = { total: 0, reviewed: 0 };
+        if (!pathTopicStats[card.learning_path_id]) {
+          pathTopicStats[card.learning_path_id] = {};
         }
-        pathStats[card.learning_path_id].total++;
+        if (!pathTopicStats[card.learning_path_id][card.topic]) {
+          pathTopicStats[card.learning_path_id][card.topic] = { total: 0, reviewed: 0 };
+        }
+        pathTopicStats[card.learning_path_id][card.topic].total++;
         if (reviewedCardIds.has(card.id)) {
-          pathStats[card.learning_path_id].reviewed++;
+          pathTopicStats[card.learning_path_id][card.topic].reviewed++;
         }
       });
 
+      // Calculate percentage based on completed topics (topics where all cards are reviewed)
       const progressPct: Record<string, number> = {};
-      Object.entries(pathStats).forEach(([pathId, stats]) => {
-        progressPct[pathId] = stats.total > 0 ? (stats.reviewed / stats.total) * 100 : 0;
+      Object.entries(pathTopicStats).forEach(([pathId, topics]) => {
+        let completedTopics = 0;
+        const totalTopics = Object.keys(topics).length;
+        
+        Object.values(topics).forEach(stats => {
+          if (stats.reviewed === stats.total && stats.total > 0) {
+            completedTopics++;
+          }
+        });
+        
+        progressPct[pathId] = totalTopics > 0 ? (completedTopics / totalTopics) * 100 : 0;
       });
 
       setPathProgress(progressPct);
