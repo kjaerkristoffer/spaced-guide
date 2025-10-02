@@ -43,6 +43,8 @@ const Learn = () => {
 
   const fetchCards = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
       const { data, error } = await supabase
         .from("cards")
         .select("*")
@@ -58,6 +60,23 @@ const Learn = () => {
       }
 
       setCards(data as Card[]);
+
+      // If resuming, find the first unreviewed card
+      if (shouldResume) {
+        const { data: progressData } = await supabase
+          .from("user_progress")
+          .select("card_id")
+          .eq("user_id", user?.id);
+
+        const reviewedCardIds = new Set(progressData?.map(p => p.card_id) || []);
+        
+        // Find the first card that hasn't been reviewed
+        const firstUnreviewedIndex = data.findIndex(card => !reviewedCardIds.has(card.id));
+        
+        if (firstUnreviewedIndex > 0) {
+          setCurrentIndex(firstUnreviewedIndex);
+        }
+      }
 
       // Fetch reading content from learning path
       const { data: pathData } = await supabase
