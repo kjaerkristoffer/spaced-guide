@@ -27,7 +27,7 @@ const Index = () => {
             LearnSmart
           </h1>
           <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Master any subject with AI-powered learning paths and spaced repetition
+            Mestre ethvert emne med AI-drevne læringsstier og afstands-gentagelse
           </p>
           <div className="flex gap-4 justify-center">
             <Button 
@@ -35,7 +35,7 @@ const Index = () => {
               className="text-lg px-8 bg-white text-primary hover:bg-white/90"
               onClick={() => navigate("/auth")}
             >
-              Get Started
+              Kom i Gang
             </Button>
             <Button 
               size="lg" 
@@ -43,7 +43,7 @@ const Index = () => {
               className="text-lg px-8 bg-white/10 text-white border-white/30 hover:bg-white/20"
               onClick={() => navigate("/auth")}
             >
-              Sign In
+              Log Ind
             </Button>
           </div>
         </div>
@@ -53,9 +53,9 @@ const Index = () => {
             <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center mb-4">
               <Zap className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">AI-Powered Paths</h3>
+            <h3 className="text-xl font-semibold mb-2">AI-Drevne Læringsstier</h3>
             <p className="text-white/80">
-              Let AI create personalized learning paths tailored to any subject you want to master
+              Lad AI skabe personlige læringsstier tilpasset ethvert emne du vil mestre
             </p>
           </div>
 
@@ -63,9 +63,9 @@ const Index = () => {
             <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center mb-4">
               <BookOpen className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">Smart Learning</h3>
+            <h3 className="text-xl font-semibold mb-2">Smart Læring</h3>
             <p className="text-white/80">
-              Study with flashcards and quizzes designed to maximize retention and understanding
+              Studér med flashcards og quizzer designet til at maksimere retention og forståelse
             </p>
           </div>
 
@@ -73,9 +73,9 @@ const Index = () => {
             <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center mb-4">
               <RotateCcw className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">Spaced Repetition</h3>
+            <h3 className="text-xl font-semibold mb-2">Afstands-Gentagelse</h3>
             <p className="text-white/80">
-              Review at optimal intervals to move knowledge from short-term to long-term memory
+              Gennemgå på optimale intervaller for at flytte viden fra korttids- til langtidshukommelse
             </p>
           </div>
         </div>

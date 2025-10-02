@@ -51,7 +51,7 @@ const Learn = () => {
       if (error) throw error;
       
       if (!data || data.length === 0) {
-        toast.error("No cards found for this topic");
+        toast.error("Ingen kort fundet for dette emne");
         navigate(`/path/${pathId}`);
         return;
       }
@@ -78,7 +78,7 @@ const Learn = () => {
         }
       }
     } catch (error: any) {
-      toast.error("Failed to load cards");
+      toast.error("Kunne ikke indlæse kort");
       navigate("/dashboard");
     } finally {
       setLoading(false);
@@ -138,12 +138,12 @@ const Learn = () => {
       if (currentIndex < cards.length - 1) {
         setCurrentIndex(currentIndex + 1);
       } else {
-        toast.success("Topic completed!");
+        toast.success("Emne fuldført!");
         navigate(`/path/${pathId}`);
       }
     } catch (error: any) {
       console.error("Error updating progress:", error);
-      toast.error("Failed to save progress");
+      toast.error("Kunne ikke gemme fremskridt");
     }
   };
 
@@ -162,7 +162,7 @@ const Learn = () => {
           <div className="container mx-auto px-4 py-4">
             <Button variant="ghost" onClick={() => navigate(`/path/${pathId}`)}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Exit
+              Afslut
             </Button>
           </div>
         </header>
@@ -175,7 +175,7 @@ const Learn = () => {
                 <CardTitle className="text-2xl">{topic}</CardTitle>
               </div>
               <p className="text-sm text-muted-foreground">
-                {readingTime} min read · {cards.length} practice questions follow
+                {readingTime} min læsning · {cards.length} øvelsesspørgsmål følger
               </p>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -202,7 +202,7 @@ const Learn = () => {
                   className="w-full"
                   size="lg"
                 >
-                  Start Practice Questions ({cards.length} questions)
+                  Start Øvelsesspørgsmål ({cards.length} spørgsmål)
                 </Button>
               </div>
             </CardContent>
@@ -222,7 +222,7 @@ const Learn = () => {
           <div className="flex items-center justify-between">
             <Button variant="ghost" onClick={() => navigate(`/path/${pathId}`)}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Exit
+              Afslut
             </Button>
             <div className="text-sm font-medium">
               {currentIndex + 1} / {cards.length}

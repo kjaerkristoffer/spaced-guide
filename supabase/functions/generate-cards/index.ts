@@ -21,28 +21,28 @@ serve(async (req) => {
     console.log("Generating content for topic:", topic, "Reading:", generateReading);
 
     const systemPrompt = generateReading
-      ? `You are an expert educator. Create engaging reading content and learning cards for the given topic.
+      ? `Du er en ekspert underviser. Skab engagerende læseindhold og læringskort på DANSK for det givne emne.
         
-        CRITICAL: You MUST return BOTH "reading" AND "cards" fields in your response. Do not omit either field.
+        KRITISK: Du SKAL returnere BÅDE "reading" OG "cards" felter i dit svar. Udelad ikke nogen af felterne.
         
-        Return ONLY valid JSON (no markdown, no code blocks) with this EXACT structure:
+        Returner KUN gyldig JSON (ingen markdown, ingen kodeblokke) med denne PRÆCISE struktur:
         {
-          "reading": "An engaging, informative 2-6 minute read about the topic. Make it exciting and accessible! Include 3-5 fun and surprising facts throughout, each with a WEIRD, FUNNY, or RIDICULOUS mnemonic device to help remember it. The mnemonics should be memorable through absurdity or humor - think silly acronyms, bizarre mental images, or outrageous associations. Format facts in bold using **text** and italicize mnemonic devices using *text*.",
+          "reading": "En engagerende, informativ 2-6 minutters læsning på DANSK om emnet. Gør det spændende og tilgængeligt! Inkluder 3-5 sjove og overraskende fakta, hver med en UNDERLIG, SJOV eller LATTERLIG huskeregel til at huske det. Huskereglerne skal være mindeværdige gennem absurditet eller humor - tænk dumme akronymer, bizarre mentale billeder eller vanvittige associationer. Formater fakta med fed skrift ved hjælp af **tekst** og kursivér huskereglen ved hjælp af *tekst*.",
           "cards": [
             {
-              "question": "Question text",
-              "answer": "Answer text",
+              "question": "Spørgsmål tekst på DANSK",
+              "answer": "Svar tekst på DANSK",
               "type": "flashcard",
               "options": null
             },
             {
-              "question": "Quiz question",
-              "answer": "Correct answer",
+              "question": "Quiz spørgsmål på DANSK",
+              "answer": "Korrekt svar på DANSK",
               "type": "quiz",
-              "options": ["Option 1", "Option 2", "Option 3", "Option 4"]
+              "options": ["Mulighed 1 på DANSK", "Mulighed 2 på DANSK", "Mulighed 3 på DANSK", "Mulighed 4 på DANSK"]
             },
             {
-              "question": "Complete this: The capital of France is ___",
+              "question": "Udfyld dette: Hovedstaden i Frankrig er ___",
               "answer": "Paris",
               "type": "fill-blank",
               "options": null
@@ -50,26 +50,26 @@ serve(async (req) => {
           ]
         }
         
-        IMPORTANT: Always include BOTH the reading content AND the cards array. Mix flashcards, quiz questions, and fill-in-the-blank questions. For quiz questions, include 4 options with the answer being one of them.`
-      : `You are an expert educator. Create learning cards for the given topic.
-        Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
+        VIGTIGT: Inkluder ALTID BÅDE læseindholdet OG kortene. Bland flashcards, quiz spørgsmål og udfyld-hullet spørgsmål. For quiz spørgsmål, inkluder 4 muligheder hvor svaret er en af dem. ALT SKAL VÆRE PÅ DANSK.`
+      : `Du er en ekspert underviser. Skab læringskort på DANSK for det givne emne.
+        Returner KUN gyldig JSON (ingen markdown, ingen kodeblokke) med denne præcise struktur:
         {
           "cards": [
             {
-              "question": "Question text",
-              "answer": "Answer text",
+              "question": "Spørgsmål tekst på DANSK",
+              "answer": "Svar tekst på DANSK",
               "type": "flashcard",
               "options": null
             },
             {
-              "question": "Quiz question",
-              "answer": "Correct answer",
+              "question": "Quiz spørgsmål på DANSK",
+              "answer": "Korrekt svar på DANSK",
               "type": "quiz",
-              "options": ["Option 1", "Option 2", "Option 3", "Option 4"]
+              "options": ["Mulighed 1 på DANSK", "Mulighed 2 på DANSK", "Mulighed 3 på DANSK", "Mulighed 4 på DANSK"]
             }
           ]
         }
-        Mix flashcards and quiz questions. For quiz questions, include 4 options with the answer being one of them.`;
+        Bland flashcards og quiz spørgsmål. For quiz spørgsmål, inkluder 4 muligheder hvor svaret er en af dem. ALT SKAL VÆRE PÅ DANSK.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -86,7 +86,7 @@ serve(async (req) => {
           },
           {
             role: "user",
-            content: `Create ${count} learning cards (mix of flashcards, quizzes, and fill-in-the-blank) for: ${topic}`
+            content: `Skab ${count} læringskort (blanding af flashcards, quizzer og udfyld-hullet) PÅ DANSK for: ${topic}`
           }
         ],
       }),

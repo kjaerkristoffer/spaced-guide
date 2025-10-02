@@ -54,9 +54,9 @@ const Auth = () => {
 
       if (error) throw error;
 
-      toast.success("Account created! You can now sign in.");
+      toast.success("Konto oprettet! Du kan nu logge ind.");
     } catch (error: any) {
-      toast.error(error.message || "Failed to sign up");
+      toast.error(error.message || "Kunne ikke oprette konto");
     } finally {
       setLoading(false);
     }
@@ -74,10 +74,10 @@ const Auth = () => {
 
       if (error) throw error;
 
-      toast.success("Welcome back!");
+      toast.success("Velkommen tilbage!");
       navigate("/dashboard");
     } catch (error: any) {
-      toast.error(error.message || "Failed to sign in");
+      toast.error(error.message || "Kunne ikke logge ind");
     } finally {
       setLoading(false);
     }
@@ -95,14 +95,14 @@ const Auth = () => {
           </div>
           <CardTitle className="text-2xl font-bold">LearnSmart</CardTitle>
           <CardDescription>
-            Master any subject with AI-powered spaced repetition
+            Mestre ethvert emne med AI-drevet afstands-gentagelse
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="signin">Log Ind</TabsTrigger>
+              <TabsTrigger value="signup">Opret Konto</TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin">
@@ -112,14 +112,14 @@ const Auth = () => {
                   <Input
                     id="signin-email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder="dig@eksempel.dk"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
+                  <Label htmlFor="signin-password">Adgangskode</Label>
                   <Input
                     id="signin-password"
                     type="password"
@@ -130,7 +130,7 @@ const Auth = () => {
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Signing in..." : "Sign In"}
+                  {loading ? "Logger ind..." : "Log Ind"}
                 </Button>
               </form>
             </TabsContent>
@@ -138,11 +138,11 @@ const Auth = () => {
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-name">Full Name</Label>
+                  <Label htmlFor="signup-name">Fulde Navn</Label>
                   <Input
                     id="signup-name"
                     type="text"
-                    placeholder="John Doe"
+                    placeholder="Anders Andersen"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required
@@ -153,14 +153,14 @@ const Auth = () => {
                   <Input
                     id="signup-email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder="dig@eksempel.dk"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                  <Label htmlFor="signup-password">Adgangskode</Label>
                   <Input
                     id="signup-password"
                     type="password"
@@ -172,7 +172,7 @@ const Auth = () => {
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Creating account..." : "Create Account"}
+                  {loading ? "Opretter konto..." : "Opret Konto"}
                 </Button>
               </form>
             </TabsContent>

@@ -47,7 +47,7 @@ const LearningPath = () => {
       if (error) throw error;
       setPath(data as unknown as LearningPath);
     } catch (error: any) {
-      toast.error("Failed to load learning path");
+      toast.error("Kunne ikke indlæse læringssti");
       navigate("/dashboard");
     } finally {
       setLoading(false);
@@ -122,7 +122,7 @@ const LearningPath = () => {
 
       // If cards already exist, just navigate to the learning page
       if (existingCards && existingCards.length > 0) {
-        toast.success("Resuming topic...");
+        toast.success("Genoptager emne...");
         navigate(`/learn?path=${id}&topic=${encodeURIComponent(topic.title)}`);
         setGeneratingCards(null);
         return;
@@ -139,7 +139,7 @@ const LearningPath = () => {
       // Validate response structure
       if (!functionData || !functionData.cards || !Array.isArray(functionData.cards)) {
         console.error("Invalid response from generate-cards:", functionData);
-        throw new Error("Failed to generate cards. Please try again.");
+        throw new Error("Kunne ikke generere kort. Prøv venligst igen.");
       }
 
       // Save cards to database
@@ -171,11 +171,11 @@ const LearningPath = () => {
           .eq("id", id);
       }
 
-      toast.success("Content generated! Starting learning session...");
+      toast.success("Indhold genereret! Starter læringssession...");
       navigate(`/learn?path=${id}&topic=${encodeURIComponent(topic.title)}`);
       fetchProgress();
     } catch (error: any) {
-      toast.error(error.message || "Failed to generate cards");
+      toast.error(error.message || "Kunne ikke generere kort");
     } finally {
       setGeneratingCards(null);
     }
@@ -195,7 +195,7 @@ const LearningPath = () => {
         <div className="container mx-auto px-4 py-4">
           <Button variant="ghost" onClick={() => navigate("/dashboard")}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
+            Tilbage til Dashboard
           </Button>
         </div>
       </header>
@@ -209,7 +209,7 @@ const LearningPath = () => {
             <div className="flex-1">
               <h1 className="text-3xl font-bold">{path?.subject}</h1>
               <p className="text-muted-foreground">
-                {path?.structure?.topics?.length || 0} topics
+                {path?.structure?.topics?.length || 0} emner
               </p>
             </div>
             <div className="text-right">
@@ -219,7 +219,7 @@ const LearningPath = () => {
                   {completedTopics.size}/{path?.structure?.topics?.length || 0}
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground">Completed</p>
+              <p className="text-sm text-muted-foreground">Fuldført</p>
             </div>
           </div>
           <Progress 
@@ -251,7 +251,7 @@ const LearningPath = () => {
                         </span>
                         {topic.title}
                         {isCompleted && (
-                          <span className="text-sm font-normal text-green-600">✓ Completed</span>
+                          <span className="text-sm font-normal text-green-600">✓ Fuldført</span>
                         )}
                       </CardTitle>
                       <CardDescription className="mt-2">
@@ -261,7 +261,7 @@ const LearningPath = () => {
                         <div className="mt-3">
                           <Progress value={progress} className="h-1" />
                           <p className="text-xs text-muted-foreground mt-1">
-                            {Math.round(progress)}% completed
+                            {Math.round(progress)}% fuldført
                           </p>
                         </div>
                       )}
@@ -280,12 +280,12 @@ const LearningPath = () => {
                     {generatingCards === topic.title ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Generating Content...
+                        Genererer Indhold...
                       </>
                     ) : (
                       <>
                         <Play className="w-4 h-4 mr-2" />
-                        {isCompleted ? 'Review Topic' : 'Start Learning'}
+                        {isCompleted ? 'Gennemgå Emne' : 'Start Læring'}
                       </>
                     )}
                   </Button>

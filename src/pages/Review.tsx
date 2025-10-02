@@ -80,7 +80,7 @@ const Review = () => {
       if (error) throw error;
       setReviewCards((data as any) || []);
     } catch (error: any) {
-      toast.error("Failed to load review cards");
+      toast.error("Kunne ikke indlæse gennemgangskort");
     } finally {
       setLoading(false);
     }
@@ -156,13 +156,13 @@ const Review = () => {
       if (currentIndex < reviewCards.length - 1) {
         setCurrentIndex(currentIndex + 1);
       } else {
-        toast.success("All reviews completed!");
+        toast.success("Alle gennemgange fuldført!");
         fetchDueCards();
         fetchHistory();
         setCurrentIndex(0);
       }
     } catch (error: any) {
-      toast.error("Failed to save progress");
+      toast.error("Kunne ikke gemme fremskridt");
     }
   };
 
@@ -173,9 +173,9 @@ const Review = () => {
   };
 
   const getMasteryLabel = (level: number) => {
-    if (level >= 4) return "Mastered";
-    if (level >= 2) return "Learning";
-    return "New";
+    if (level >= 4) return "Mestret";
+    if (level >= 2) return "Lærer";
+    return "Ny";
   };
 
   if (loading) {
@@ -205,7 +205,7 @@ const Review = () => {
         <div className="container mx-auto px-4 py-4">
           <Button variant="ghost" onClick={() => navigate("/dashboard")}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Dashboard
+            Tilbage til Dashboard
           </Button>
         </div>
       </header>
@@ -214,10 +214,10 @@ const Review = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
             <TabsTrigger value="review">
-              Due Now ({reviewCards.length})
+              Forfaldne Nu ({reviewCards.length})
             </TabsTrigger>
             <TabsTrigger value="history">
-              History ({historyCards.length})
+              Historik ({historyCards.length})
             </TabsTrigger>
           </TabsList>
 
@@ -226,12 +226,12 @@ const Review = () => {
               <Card className="max-w-2xl mx-auto text-center py-12">
                 <CardContent>
                   <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-green-500" />
-                  <h2 className="text-2xl font-bold mb-2">All caught up!</h2>
+                  <h2 className="text-2xl font-bold mb-2">Alle opdateret!</h2>
                   <p className="text-muted-foreground mb-6">
-                    No cards are due for review right now.
+                    Ingen kort er forfaldne til gennemgang lige nu.
                   </p>
                   <Button onClick={() => navigate("/dashboard")}>
-                    Back to Dashboard
+                    Tilbage til Dashboard
                   </Button>
                 </CardContent>
               </Card>
@@ -249,10 +249,10 @@ const Review = () => {
                   <Progress value={((currentIndex + 1) / reviewCards.length) * 100} />
                   <div className="flex items-center gap-2 mt-2">
                     <Badge variant="outline">
-                      Mastery: {reviewCards[currentIndex]?.mastery_level}/5
+                      Beherskelse: {reviewCards[currentIndex]?.mastery_level}/5
                     </Badge>
                     <Badge variant="outline">
-                      Reviews: {reviewCards[currentIndex]?.review_count}
+                      Gennemgange: {reviewCards[currentIndex]?.review_count}
                     </Badge>
                   </div>
                 </div>
@@ -310,12 +310,12 @@ const Review = () => {
                               </Badge>
                               <span className="flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
-                                {card.review_count} reviews
+                                {card.review_count} gennemgange
                               </span>
                               <span>
                                 {card.last_reviewed
-                                  ? new Date(card.last_reviewed).toLocaleDateString()
-                                  : "Never"}
+                                  ? new Date(card.last_reviewed).toLocaleDateString('da-DK')
+                                  : "Aldrig"}
                               </span>
                             </div>
                           </div>

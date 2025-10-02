@@ -31,23 +31,23 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are an expert learning path designer. Create a structured learning path for the given subject. 
-            Return ONLY valid JSON (no markdown, no code blocks) with this exact structure:
+            content: `Du er en ekspert læringsstiedesigner. Skab en struktureret læringssti på DANSK for det givne emne. 
+            Returner KUN gyldig JSON (ingen markdown, ingen kodeblokke) med denne præcise struktur:
             {
               "topics": [
                 {
-                  "title": "Topic name",
-                  "description": "Brief description",
+                  "title": "Emne navn på DANSK",
+                  "description": "Kort beskrivelse på DANSK",
                   "order": 1,
                   "estimatedMinutes": 30
                 }
               ]
             }
-            Create 5-8 topics that build on each other progressively.`
+            Skab 5-8 emner der bygger progressivt på hinanden. ALT SKAL VÆRE PÅ DANSK.`
           },
           {
             role: "user",
-            content: `Create a learning path for: ${subject}`
+            content: `Skab en læringssti på DANSK for: ${subject}`
           }
         ],
       }),

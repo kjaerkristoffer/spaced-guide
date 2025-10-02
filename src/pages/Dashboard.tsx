@@ -52,7 +52,7 @@ const Dashboard = () => {
       if (error) throw error;
       setLearningPaths(data || []);
     } catch (error: any) {
-      toast.error("Failed to load learning paths");
+      toast.error("Kunne ikke indlæse læringsstier");
     } finally {
       setLoading(false);
     }
@@ -134,7 +134,7 @@ const Dashboard = () => {
 
   const createLearningPath = async () => {
     if (!newSubject.trim()) {
-      toast.error("Please enter a subject");
+      toast.error("Indtast venligst et emne");
       return;
     }
 
@@ -162,13 +162,13 @@ const Dashboard = () => {
 
       if (error) throw error;
 
-      toast.success("Learning path created!");
+      toast.success("Læringssti oprettet!");
       setNewSubject("");
       setDialogOpen(false);
       fetchLearningPaths();
       fetchPathProgress();
     } catch (error: any) {
-      toast.error(error.message || "Failed to create learning path");
+      toast.error(error.message || "Kunne ikke oprette læringssti");
     } finally {
       setCreating(false);
     }
@@ -186,7 +186,7 @@ const Dashboard = () => {
           </div>
           <Button variant="outline" onClick={handleSignOut}>
             <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
+            Log Ud
           </Button>
         </div>
       </header>
@@ -197,16 +197,16 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5" />
-                Learning Area
+                Læringsområde
               </CardTitle>
-              <CardDescription>Study new topics and concepts</CardDescription>
+              <CardDescription>Studér nye emner og koncepter</CardDescription>
             </CardHeader>
             <CardContent>
               <Button 
                 className="w-full" 
                 onClick={() => navigate("/learn")}
               >
-                Start Learning
+                Start Læring
               </Button>
             </CardContent>
           </Card>
@@ -215,18 +215,18 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <RotateCcw className="w-5 h-5" />
-                Spaced Repetition
+                Afstands-Gentagelse
               </CardTitle>
-              <CardDescription>Review and reinforce knowledge</CardDescription>
+              <CardDescription>Gennemgå og forstærk viden</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Due now:</span>
+                  <span className="text-muted-foreground">Forfaldne nu:</span>
                   <span className="font-semibold text-lg">{dueCardsCount}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Total tracked:</span>
+                  <span className="text-muted-foreground">I alt sporet:</span>
                   <span className="font-medium">{totalCardsCount}</span>
                 </div>
                 <Button 
@@ -234,7 +234,7 @@ const Dashboard = () => {
                   onClick={() => navigate("/review")}
                   disabled={dueCardsCount === 0}
                 >
-                  {dueCardsCount === 0 ? "No Cards Due" : `Review ${dueCardsCount} Card${dueCardsCount !== 1 ? 's' : ''}`}
+                  {dueCardsCount === 0 ? "Ingen Kort Forfaldne" : `Gennemgå ${dueCardsCount} Kort`}
                 </Button>
               </div>
             </CardContent>
@@ -242,27 +242,27 @@ const Dashboard = () => {
         </div>
 
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Your Learning Paths</h2>
+          <h2 className="text-2xl font-bold">Dine Læringsstier</h2>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
-                New Subject
+                Nyt Emne
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Create New Learning Path</DialogTitle>
+                <DialogTitle>Opret Ny Læringssti</DialogTitle>
                 <DialogDescription>
-                  Enter a subject you want to learn, and AI will create a structured learning path for you.
+                  Indtast et emne du vil lære, og AI vil skabe en struktureret læringssti til dig.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="subject">Subject</Label>
+                  <Label htmlFor="subject">Emne</Label>
                   <Input
                     id="subject"
-                    placeholder="e.g., Python Programming, Spanish Grammar, Quantum Physics..."
+                    placeholder="f.eks. Python Programmering, Spansk Grammatik, Kvantfysik..."
                     value={newSubject}
                     onChange={(e) => setNewSubject(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && createLearningPath()}
@@ -276,10 +276,10 @@ const Dashboard = () => {
                   {creating ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Generating...
+                      Genererer...
                     </>
                   ) : (
-                    "Create Learning Path"
+                    "Opret Læringssti"
                   )}
                 </Button>
               </div>
@@ -294,9 +294,9 @@ const Dashboard = () => {
         ) : learningPaths.length === 0 ? (
           <Card className="p-12 text-center">
             <Brain className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-xl font-semibold mb-2">No learning paths yet</h3>
+            <h3 className="text-xl font-semibold mb-2">Ingen læringsstier endnu</h3>
             <p className="text-muted-foreground mb-4">
-              Create your first learning path to get started!
+              Opret din første læringssti for at komme i gang!
             </p>
           </Card>
         ) : (
@@ -319,19 +319,19 @@ const Dashboard = () => {
                       {isComplete && <CheckCircle2 className="w-5 h-5 text-green-500" />}
                     </CardTitle>
                     <CardDescription>
-                      {path.structure?.topics?.length || 0} topics
+                      {path.structure?.topics?.length || 0} emner
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
                       <p className="text-sm text-muted-foreground">
-                        Created {new Date(path.created_at).toLocaleDateString()}
+                        Oprettet {new Date(path.created_at).toLocaleDateString('da-DK')}
                       </p>
                       {progress > 0 && (
                         <div>
                           <Progress value={progress} className="h-1.5" />
                           <p className="text-xs text-muted-foreground mt-1">
-                            {Math.round(progress)}% complete
+                            {Math.round(progress)}% fuldført
                           </p>
                         </div>
                       )}

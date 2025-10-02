@@ -28,7 +28,7 @@ const FillBlankCard = ({ question, answer, onRate }: FillBlankCardProps) => {
   return (
     <Card className="max-w-2xl mx-auto shadow-[var(--shadow-elevated)]">
       <CardHeader>
-        <CardTitle className="text-center text-xl">Fill in the Blank</CardTitle>
+        <CardTitle className="text-center text-xl">Udfyld Hullet</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="p-6 rounded-lg bg-secondary/50 text-center">
@@ -41,7 +41,7 @@ const FillBlankCard = ({ question, answer, onRate }: FillBlankCardProps) => {
               value={userAnswer}
               onChange={(e) => setUserAnswer(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
-              placeholder="Type your answer..."
+              placeholder="Indtast dit svar..."
               className="text-center text-lg"
               autoFocus
             />
@@ -50,7 +50,7 @@ const FillBlankCard = ({ question, answer, onRate }: FillBlankCardProps) => {
               className="w-full"
               disabled={!userAnswer.trim()}
             >
-              Submit Answer
+              Indsend Svar
             </Button>
           </div>
         ) : (
@@ -60,20 +60,20 @@ const FillBlankCard = ({ question, answer, onRate }: FillBlankCardProps) => {
                 {isCorrect ? (
                   <>
                     <Check className="w-5 h-5 text-green-600" />
-                    <span className="font-semibold text-green-600">Correct!</span>
+                    <span className="font-semibold text-green-600">Korrekt!</span>
                   </>
                 ) : (
                   <>
                     <X className="w-5 h-5 text-red-600" />
-                    <span className="font-semibold text-red-600">Incorrect</span>
+                    <span className="font-semibold text-red-600">Forkert</span>
                   </>
                 )}
               </div>
               {!isCorrect && (
                 <p className="text-center">
-                  Your answer: <span className="font-medium">{userAnswer}</span>
+                  Dit svar: <span className="font-medium">{userAnswer}</span>
                   <br />
-                  Correct answer: <span className="font-medium">{answer}</span>
+                  Korrekt svar: <span className="font-medium">{answer}</span>
                 </p>
               )}
             </div>
@@ -90,7 +90,7 @@ const FillBlankCard = ({ question, answer, onRate }: FillBlankCardProps) => {
               ))}
             </div>
             <p className="text-sm text-center text-muted-foreground">
-              Rate how well you knew this (1 = didn't know, 5 = knew perfectly)
+              Bedøm hvor godt du vidste dette (1 = vidste ikke, 5 = vidste perfekt)
             </p>
           </div>
         )}

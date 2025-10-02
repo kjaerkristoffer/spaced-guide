@@ -22,16 +22,16 @@ const FlashCard = ({ question, answer, onRate }: FlashCardProps) => {
           <div className="text-center">
             {!flipped ? (
               <>
-                <div className="text-sm text-muted-foreground mb-4">Question</div>
+                <div className="text-sm text-muted-foreground mb-4">Spørgsmål</div>
                 <p className="text-2xl font-medium">{question}</p>
                 <div className="mt-8 flex items-center gap-2 text-sm text-muted-foreground">
                   <RotateCw className="w-4 h-4" />
-                  <span>Click to reveal answer</span>
+                  <span>Klik for at afsløre svar</span>
                 </div>
               </>
             ) : (
               <>
-                <div className="text-sm text-muted-foreground mb-4">Answer</div>
+                <div className="text-sm text-muted-foreground mb-4">Svar</div>
                 <p className="text-xl">{answer}</p>
               </>
             )}
@@ -47,7 +47,7 @@ const FlashCard = ({ question, answer, onRate }: FlashCardProps) => {
             onClick={() => onRate(1)}
             className="flex-1 max-w-[140px]"
           >
-            Hard
+            Svært
           </Button>
           <Button
             variant="outline"
@@ -55,14 +55,14 @@ const FlashCard = ({ question, answer, onRate }: FlashCardProps) => {
             onClick={() => onRate(3)}
             className="flex-1 max-w-[140px]"
           >
-            Good
+            Godt
           </Button>
           <Button
             size="lg"
             onClick={() => onRate(5)}
             className="flex-1 max-w-[140px]"
           >
-            Easy
+            Nemt
           </Button>
         </div>
       )}

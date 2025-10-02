@@ -33,7 +33,7 @@ const QuizCard = ({ question, answer, options, onRate }: QuizCardProps) => {
       <Card className="shadow-[var(--shadow-elevated)]">
         <CardContent className="p-8">
           <div className="mb-6">
-            <div className="text-sm text-muted-foreground mb-4">Question</div>
+            <div className="text-sm text-muted-foreground mb-4">Spørgsmål</div>
             <p className="text-2xl font-medium">{question}</p>
           </div>
 
@@ -75,11 +75,11 @@ const QuizCard = ({ question, answer, options, onRate }: QuizCardProps) => {
           {showResult && (
             <div className={`mt-6 p-4 rounded-lg ${isCorrect ? 'bg-success/10' : 'bg-destructive/10'}`}>
               <p className={`font-medium ${isCorrect ? 'text-success' : 'text-destructive'}`}>
-                {isCorrect ? "✓ Correct!" : "✗ Incorrect"}
+                {isCorrect ? "✓ Korrekt!" : "✗ Forkert"}
               </p>
               {!isCorrect && (
                 <p className="text-sm mt-2 text-muted-foreground">
-                  The correct answer is: <strong>{answer}</strong>
+                  Det korrekte svar er: <strong>{answer}</strong>
                 </p>
               )}
             </div>
