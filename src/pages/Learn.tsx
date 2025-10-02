@@ -24,12 +24,13 @@ const Learn = () => {
   const [searchParams] = useSearchParams();
   const pathId = searchParams.get("path");
   const topic = searchParams.get("topic");
+  const shouldResume = searchParams.get("resume") === "true";
 
   const [cards, setCards] = useState<Card[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [readingContent, setReadingContent] = useState<string>("");
-  const [showReading, setShowReading] = useState(true);
+  const [showReading, setShowReading] = useState(!shouldResume);
   const [readingTime, setReadingTime] = useState(0);
 
   useEffect(() => {

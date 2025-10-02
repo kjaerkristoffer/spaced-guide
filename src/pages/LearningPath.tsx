@@ -120,10 +120,13 @@ const LearningPath = () => {
 
       if (checkError) throw checkError;
 
-      // If cards already exist, just navigate to the learning page
+      // If cards already exist, navigate with resume flag
       if (existingCards && existingCards.length > 0) {
-        toast.success("Genoptager emne...");
-        navigate(`/learn?path=${id}&topic=${encodeURIComponent(topic.title)}`);
+        const progress = topicProgress[topic.title] || 0;
+        const isInProgress = progress > 0 && progress < 100;
+        
+        toast.success(isInProgress ? "Genoptager emne..." : "Gennemgår emne...");
+        navigate(`/learn?path=${id}&topic=${encodeURIComponent(topic.title)}${isInProgress ? '&resume=true' : ''}`);
         setGeneratingCards(null);
         return;
       }
