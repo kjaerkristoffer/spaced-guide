@@ -37,8 +37,7 @@ const Dashboard = () => {
   const [dueCardsCount, setDueCardsCount] = useState(0);
   const [totalCardsCount, setTotalCardsCount] = useState(0);
   const [pathProgress, setPathProgress] = useState<Record<string, number>>({});
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [pathToDelete, setPathToDelete] = useState<string | null>(null);
+  const [deletingPathId, setDeletingPathId] = useState<string | null>(null);
 
   useEffect(() => {
     checkAuth();
@@ -186,23 +185,20 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeletePath = async () => {
-    if (!pathToDelete) return;
-    
+  const deleteLearningPath = async (pathId: string) => {
     try {
       const { error } = await supabase
         .from("learning_paths")
         .delete()
-        .eq("id", pathToDelete);
+        .eq("id", pathId);
 
       if (error) throw error;
 
       toast.success("Læringssti slettet!");
-      setDeleteDialogOpen(false);
-      setPathToDelete(null);
       fetchLearningPaths();
       fetchPathProgress();
       fetchReviewStats();
+      setDeletingPathId(null);
     } catch (error: any) {
       toast.error(error.message || "Kunne ikke slette læringssti");
     }
@@ -362,8 +358,7 @@ const Dashboard = () => {
                         size="icon"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setPathToDelete(path.id);
-                          setDeleteDialogOpen(true);
+                          setDeletingPathId(path.id);
                         }}
                         className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
@@ -393,17 +388,21 @@ const Dashboard = () => {
         )}
       </main>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialog open={!!deletingPathId} onOpenChange={() => setDeletingPathId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
             <AlertDialogDescription>
-              Dette vil permanent slette læringsstien og alle tilhørende kort og fremskridt. Denne handling kan ikke fortrydes.
+              Dette vil permanent slette læringsstien og alle tilhørende kort og fremskridt. 
+              Denne handling kan ikke fortrydes.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setPathToDelete(null)}>Annuller</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeletePath} className="bg-destructive hover:bg-destructive/90">
+            <AlertDialogCancel>Annuller</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deletingPathId && deleteLearningPath(deletingPathId)}
+              className="bg-destructive hover:bg-destructive/90"
+            >
               Slet
             </AlertDialogAction>
           </AlertDialogFooter>
