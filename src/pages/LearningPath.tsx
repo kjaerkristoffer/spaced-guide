@@ -44,16 +44,20 @@ const LearningPath = () => {
         .eq("id", id)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching learning path:", error);
+        throw error;
+      }
       
       if (!data) {
-        toast.error("Læringssti ikke fundet");
+        toast.error("Denne læringssti eksisterer ikke længere. Måske er den blevet slettet?");
         navigate("/dashboard");
         return;
       }
       
       setPath(data as unknown as LearningPath);
     } catch (error: any) {
+      console.error("Failed to load learning path:", error);
       toast.error("Kunne ikke indlæse læringssti");
       navigate("/dashboard");
     } finally {
