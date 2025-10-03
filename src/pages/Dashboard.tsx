@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2, CheckCircle2, Trash2 } from "lucide-react";
+import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2, CheckCircle2, Trash2, Trophy, Star, Flame, Target } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,12 +38,16 @@ const Dashboard = () => {
   const [totalCardsCount, setTotalCardsCount] = useState(0);
   const [pathProgress, setPathProgress] = useState<Record<string, number>>({});
   const [deletingPathId, setDeletingPathId] = useState<string | null>(null);
+  const [userStats, setUserStats] = useState<any>(null);
+  const [activeMissions, setActiveMissions] = useState<number>(0);
+  const [unlockedAchievements, setUnlockedAchievements] = useState<number>(0);
 
   useEffect(() => {
     checkAuth();
     fetchLearningPaths();
     fetchReviewStats();
     fetchPathProgress();
+    fetchMissionStats();
   }, []);
 
   const checkAuth = async () => {
@@ -173,6 +177,50 @@ const Dashboard = () => {
       setPathProgress(progressPct);
     } catch (error: any) {
       console.error("Failed to fetch path progress:", error);
+    }
+  };
+
+  const fetchMissionStats = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Fetch or create user stats
+      let { data: stats } = await supabase
+        .from("user_stats")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!stats) {
+        const { data: newStats } = await supabase
+          .from("user_stats")
+          .insert({ user_id: user.id })
+          .select()
+          .single();
+        stats = newStats;
+      }
+
+      setUserStats(stats);
+
+      // Fetch active missions count
+      const { data: missions } = await supabase
+        .from("user_missions")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("completed", false);
+
+      setActiveMissions(missions?.length || 0);
+
+      // Fetch unlocked achievements count
+      const { count } = await supabase
+        .from("user_achievements")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id);
+
+      setUnlockedAchievements(count || 0);
+    } catch (error: any) {
+      console.error("Failed to fetch mission stats:", error);
     }
   };
 
@@ -332,6 +380,67 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Missions & Achievements Overview */}
+        <Card 
+          className="mb-12 max-w-5xl mx-auto bg-gradient-to-br from-purple-500/10 via-yellow-500/10 to-orange-500/10 border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 cursor-pointer hover:shadow-[var(--shadow-elevated)]"
+          onClick={() => navigate("/missions")}
+        >
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500">
+                  <Trophy className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl">Missioner & Achievements</CardTitle>
+                  <CardDescription>Følg din fremgang og lås op for belønninger</CardDescription>
+                </div>
+              </div>
+              <Button variant="outline" size="lg" onClick={(e) => {
+                e.stopPropagation();
+                navigate("/missions");
+              }}>
+                Se Alle
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 border border-border/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <Star className="w-5 h-5 text-yellow-500 fill-current" />
+                  <span className="text-sm text-muted-foreground">Total Points</span>
+                </div>
+                <p className="text-2xl font-bold text-yellow-500">{userStats?.total_points || 0}</p>
+              </div>
+              
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 border border-border/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <Flame className="w-5 h-5 text-orange-500" />
+                  <span className="text-sm text-muted-foreground">Streak</span>
+                </div>
+                <p className="text-2xl font-bold text-orange-500">{userStats?.current_streak || 0} dage</p>
+              </div>
+              
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 border border-border/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <Target className="w-5 h-5 text-blue-500" />
+                  <span className="text-sm text-muted-foreground">Aktive Missioner</span>
+                </div>
+                <p className="text-2xl font-bold text-blue-500">{activeMissions}</p>
+              </div>
+              
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 border border-border/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <Trophy className="w-5 h-5 text-purple-500" />
+                  <span className="text-sm text-muted-foreground">Achievements</span>
+                </div>
+                <p className="text-2xl font-bold text-purple-500">{unlockedAchievements}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Dine Læringsstier</h2>
