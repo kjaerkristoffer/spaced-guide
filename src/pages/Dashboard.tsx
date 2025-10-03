@@ -71,8 +71,6 @@ const Dashboard = () => {
 
   const fetchReviewStats = async () => {
     try {
-      const now = new Date().toISOString();
-      
       // Get total cards being tracked
       const { count: totalCount, error: totalError } = await supabase
         .from("user_progress")
@@ -81,14 +79,22 @@ const Dashboard = () => {
       if (totalError) throw totalError;
       setTotalCardsCount(totalCount || 0);
 
-      // Get cards due for review
-      const { count: dueCount, error: dueError } = await supabase
+      // Get all cards with next_review dates and filter client-side
+      const { data, error } = await supabase
         .from("user_progress")
-        .select("*", { count: "exact", head: true })
-        .lte("next_review", now);
+        .select("next_review")
+        .not("next_review", "is", null);
 
-      if (dueError) throw dueError;
-      setDueCardsCount(dueCount || 0);
+      if (error) throw error;
+      
+      // Filter cards that are due on the client side to handle timezone properly
+      const now = new Date();
+      const dueCards = (data || []).filter((card: any) => {
+        const nextReviewDate = new Date(card.next_review);
+        return nextReviewDate <= now;
+      });
+      
+      setDueCardsCount(dueCards.length);
     } catch (error: any) {
       console.error("Failed to fetch review stats:", error);
     }
