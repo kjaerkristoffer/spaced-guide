@@ -57,7 +57,6 @@ const Review = () => {
 
   const fetchDueCards = async () => {
     try {
-      const now = new Date().toISOString();
       const { data: { user } } = await supabase.auth.getUser();
 
       const { data, error } = await supabase
@@ -74,11 +73,20 @@ const Review = () => {
           )
         `)
         .eq("user_id", user?.id)
-        .lte("next_review", now)
+        .not("next_review", "is", null)
         .order("next_review", { ascending: true });
 
       if (error) throw error;
-      setReviewCards((data as any) || []);
+      
+      // Filter cards that are due on the client side to handle timezone properly
+      const now = new Date();
+      const dueCards = (data || []).filter((card: any) => {
+        if (!card.next_review) return false;
+        const nextReviewDate = new Date(card.next_review);
+        return nextReviewDate <= now;
+      });
+      
+      setReviewCards(dueCards as any);
     } catch (error: any) {
       toast.error("Kunne ikke indlæse gennemgangskort");
     } finally {
