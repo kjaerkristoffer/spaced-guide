@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import LearningPath from "./pages/LearningPath";
 import Learn from "./pages/Learn";
 import Review from "./pages/Review";
+import SpacedRepetition from "./pages/SpacedRepetition";
 import Missions from "./pages/Missions";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/path/:id" element={<LearningPath />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/review" element={<Review />} />
+          <Route path="/spaced-repetition" element={<SpacedRepetition />} />
           <Route path="/missions" element={<Missions />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

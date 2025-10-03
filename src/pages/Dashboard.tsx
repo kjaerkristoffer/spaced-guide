@@ -311,72 +311,76 @@ const Dashboard = () => {
         <div className="mb-12 grid gap-6 md:grid-cols-2 max-w-5xl mx-auto">
           {/* Learning Area Card */}
           <Card 
-            className="group relative overflow-hidden border-2 hover:border-primary transition-all duration-300"
+            className="group relative overflow-hidden border-2 border-green-500/30 bg-gradient-to-br from-green-500/5 to-emerald-500/10"
           >
-            <div className="absolute inset-0 opacity-5" style={{ background: "var(--gradient-primary)" }} />
+            <div className="absolute inset-0 bg-gradient-to-br from-green-400/10 to-emerald-600/10" />
             <CardHeader className="relative pb-4">
-              <div className="mb-4 p-3 w-fit rounded-xl" style={{ background: "var(--gradient-primary)" }}>
+              <div className="mb-4 p-3 w-fit rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/20">
                 <BookOpen className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-3xl mb-2">Læringsområde</CardTitle>
+              <CardTitle className="text-3xl mb-2 flex items-center gap-2">
+                <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                  Læringsområde
+                </span>
+              </CardTitle>
               <CardDescription className="text-base">
                 Udforsk nye emner og opbyg din viden med AI-genererede læringsstier
               </CardDescription>
             </CardHeader>
             <CardContent className="relative pt-6">
-              <p className="text-sm text-muted-foreground mb-4">
-                Se dine læringsstier nedenfor og tryk på en for at fortsætte læringen
-              </p>
-              <div className="flex gap-2">
-                <Button 
-                  size="lg"
-                  variant="outline"
-                  className="flex-1 text-base h-12" 
-                  onClick={() => document.getElementById('learning-paths')?.scrollIntoView({ behavior: 'smooth' })}
-                >
-                  Se Mine Stier
-                </Button>
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 mb-4 border border-green-500/20">
+                <p className="text-sm text-muted-foreground">
+                  📚 Se dine læringsstier nedenfor og tryk på en for at fortsætte læringen
+                </p>
               </div>
+              <Button 
+                size="lg"
+                variant="outline"
+                className="w-full text-base h-12 border-green-500/50 hover:bg-green-500/10 hover:border-green-500" 
+                onClick={() => document.getElementById('learning-paths')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Se Mine Læringsstier
+              </Button>
             </CardContent>
           </Card>
 
           {/* Spaced Repetition Card */}
           <Card 
-            className="group relative overflow-hidden border-2 hover:border-primary transition-all duration-300 cursor-pointer hover:shadow-[var(--shadow-elevated)]"
-            onClick={() => dueCardsCount > 0 && navigate("/review")}
+            className="group relative overflow-hidden border-2 border-purple-500/30 bg-gradient-to-br from-purple-500/5 to-blue-500/10 cursor-pointer hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] transition-all duration-300"
+            onClick={() => navigate("/spaced-repetition")}
           >
-            <div className="absolute inset-0 opacity-5" style={{ background: "var(--gradient-primary)" }} />
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-blue-600/10" />
             <CardHeader className="relative pb-4">
-              <div className="mb-4 p-3 w-fit rounded-xl" style={{ background: "var(--gradient-primary)" }}>
-                <RotateCcw className="w-8 h-8 text-white" />
+              <div className="mb-4 p-3 w-fit rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 shadow-lg shadow-purple-500/20">
+                <Brain className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-3xl mb-2">Spaced Repetition</CardTitle>
+              <CardTitle className="text-3xl mb-2 flex items-center gap-2">
+                <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  Spaced Repetition
+                </span>
+              </CardTitle>
               <CardDescription className="text-base">
-                Gennemgå og forstærk din viden med videnskabeligt baseret gentagelse
+                Optimer din hukommelse med videnskabeligt bevist gentagelsesmetode
               </CardDescription>
             </CardHeader>
-            <CardContent className="relative space-y-4 pt-6">
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="bg-background/50 rounded-lg p-4 text-center border">
-                  <div className="text-3xl font-bold text-primary mb-1">{dueCardsCount}</div>
-                  <div className="text-xs text-muted-foreground">Forfaldne nu</div>
+            <CardContent className="relative pt-6">
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 mb-4 border border-purple-500/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-muted-foreground">Forfalder i dag:</span>
+                  <span className="text-lg font-bold text-purple-500">{dueCardsCount}</span>
                 </div>
-                <div className="bg-background/50 rounded-lg p-4 text-center border">
-                  <div className="text-3xl font-bold mb-1">{totalCardsCount}</div>
-                  <div className="text-xs text-muted-foreground">I alt sporet</div>
-                </div>
+                <Progress value={(dueCardsCount / Math.max(dueCardsCount, 1)) * 100} className="h-2" />
               </div>
               <Button 
                 size="lg"
-                className="w-full text-lg h-14 group-hover:scale-105 transition-transform" 
+                className="w-full text-lg h-14 bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 group-hover:scale-105 transition-transform shadow-lg shadow-purple-500/20" 
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate("/review");
+                  navigate("/spaced-repetition");
                 }}
-                disabled={dueCardsCount === 0}
               >
-                <RotateCcw className="w-5 h-5 mr-2" />
-                {dueCardsCount === 0 ? "Ingen Kort Forfaldne" : `Gennemgå ${dueCardsCount} Kort`}
+                <Brain className="w-5 h-5 mr-2" />
+                Start Gennemgang
               </Button>
             </CardContent>
           </Card>
