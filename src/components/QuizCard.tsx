@@ -18,12 +18,11 @@ const QuizCard = ({ question, answer, options, onRate }: QuizCardProps) => {
     if (showResult) return;
     setSelectedOption(option);
     setShowResult(true);
-    
-    // Auto-rate based on correctness
-    const isCorrect = option === answer;
-    setTimeout(() => {
-      onRate(isCorrect ? 5 : 1);
-    }, 1500);
+  };
+
+  const handleContinue = () => {
+    const isCorrect = selectedOption === answer;
+    onRate(isCorrect ? 5 : 1);
   };
 
   const isCorrect = selectedOption === answer;
@@ -73,16 +72,25 @@ const QuizCard = ({ question, answer, options, onRate }: QuizCardProps) => {
           </div>
 
           {showResult && (
-            <div className={`mt-6 p-4 rounded-lg ${isCorrect ? 'bg-success/10' : 'bg-destructive/10'}`}>
-              <p className={`font-medium ${isCorrect ? 'text-success' : 'text-destructive'}`}>
-                {isCorrect ? "✓ Korrekt!" : "✗ Forkert"}
-              </p>
-              {!isCorrect && (
-                <p className="text-sm mt-2 text-muted-foreground">
-                  Det korrekte svar er: <strong>{answer}</strong>
+            <>
+              <div className={`mt-6 p-4 rounded-lg ${isCorrect ? 'bg-success/10' : 'bg-destructive/10'}`}>
+                <p className={`font-medium ${isCorrect ? 'text-success' : 'text-destructive'}`}>
+                  {isCorrect ? "✓ Korrekt!" : "✗ Forkert"}
                 </p>
-              )}
-            </div>
+                {!isCorrect && (
+                  <p className="text-sm mt-2 text-muted-foreground">
+                    Det korrekte svar er: <strong>{answer}</strong>
+                  </p>
+                )}
+              </div>
+              <Button 
+                className="w-full mt-4" 
+                size="lg"
+                onClick={handleContinue}
+              >
+                Fortsæt
+              </Button>
+            </>
           )}
         </CardContent>
       </Card>
