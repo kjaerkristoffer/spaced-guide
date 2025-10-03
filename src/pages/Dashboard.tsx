@@ -253,52 +253,76 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8 grid gap-4 md:grid-cols-2">
-          <Card className="shadow-[var(--shadow-card)]" style={{ background: "var(--gradient-card)" }}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5" />
-                Læringsområde
-              </CardTitle>
-              <CardDescription>Studér nye emner og koncepter</CardDescription>
+      <main className="container mx-auto px-4 py-12">
+        <div className="mb-12 grid gap-6 md:grid-cols-2 max-w-5xl mx-auto">
+          {/* Learning Area Card */}
+          <Card 
+            className="group relative overflow-hidden border-2 hover:border-primary transition-all duration-300 cursor-pointer hover:shadow-[var(--shadow-elevated)]"
+            onClick={() => navigate("/learn")}
+          >
+            <div className="absolute inset-0 opacity-5" style={{ background: "var(--gradient-primary)" }} />
+            <CardHeader className="relative pb-4">
+              <div className="mb-4 p-3 w-fit rounded-xl" style={{ background: "var(--gradient-primary)" }}>
+                <BookOpen className="w-8 h-8 text-white" />
+              </div>
+              <CardTitle className="text-3xl mb-2">Læringsområde</CardTitle>
+              <CardDescription className="text-base">
+                Udforsk nye emner og opbyg din viden med AI-genererede læringsstier
+              </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative pt-6">
               <Button 
-                className="w-full" 
-                onClick={() => navigate("/learn")}
+                size="lg"
+                className="w-full text-lg h-14 group-hover:scale-105 transition-transform" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/learn");
+                }}
               >
+                <BookOpen className="w-5 h-5 mr-2" />
                 Start Læring
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="shadow-[var(--shadow-card)]" style={{ background: "var(--gradient-card)" }}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <RotateCcw className="w-5 h-5" />
-                Afstands-Gentagelse
-              </CardTitle>
-              <CardDescription>Gennemgå og forstærk viden</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Forfaldne nu:</span>
-                  <span className="font-semibold text-lg">{dueCardsCount}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">I alt sporet:</span>
-                  <span className="font-medium">{totalCardsCount}</span>
-                </div>
-                <Button 
-                  className="w-full" 
-                  onClick={() => navigate("/review")}
-                  disabled={dueCardsCount === 0}
-                >
-                  {dueCardsCount === 0 ? "Ingen Kort Forfaldne" : `Gennemgå ${dueCardsCount} Kort`}
-                </Button>
+          {/* Spaced Repetition Card */}
+          <Card 
+            className="group relative overflow-hidden border-2 hover:border-primary transition-all duration-300 cursor-pointer hover:shadow-[var(--shadow-elevated)]"
+            onClick={() => dueCardsCount > 0 && navigate("/review")}
+          >
+            <div className="absolute inset-0 opacity-5" style={{ background: "var(--gradient-primary)" }} />
+            <CardHeader className="relative pb-4">
+              <div className="mb-4 p-3 w-fit rounded-xl" style={{ background: "var(--gradient-primary)" }}>
+                <RotateCcw className="w-8 h-8 text-white" />
               </div>
+              <CardTitle className="text-3xl mb-2">Spaced Repetition</CardTitle>
+              <CardDescription className="text-base">
+                Gennemgå og forstærk din viden med videnskabeligt baseret gentagelse
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="relative space-y-4 pt-6">
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="bg-background/50 rounded-lg p-4 text-center border">
+                  <div className="text-3xl font-bold text-primary mb-1">{dueCardsCount}</div>
+                  <div className="text-xs text-muted-foreground">Forfaldne nu</div>
+                </div>
+                <div className="bg-background/50 rounded-lg p-4 text-center border">
+                  <div className="text-3xl font-bold mb-1">{totalCardsCount}</div>
+                  <div className="text-xs text-muted-foreground">I alt sporet</div>
+                </div>
+              </div>
+              <Button 
+                size="lg"
+                className="w-full text-lg h-14 group-hover:scale-105 transition-transform" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/review");
+                }}
+                disabled={dueCardsCount === 0}
+              >
+                <RotateCcw className="w-5 h-5 mr-2" />
+                {dueCardsCount === 0 ? "Ingen Kort Forfaldne" : `Gennemgå ${dueCardsCount} Kort`}
+              </Button>
             </CardContent>
           </Card>
         </div>
