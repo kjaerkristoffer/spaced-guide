@@ -115,11 +115,25 @@ const Missions = () => {
       const missingMissions = allMissions?.filter(m => !existingMissionIds.includes(m.id)) || [];
       
       if (missingMissions.length > 0) {
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+
+        const nextWeek = new Date(now);
+        nextWeek.setDate(nextWeek.getDate() + (7 - now.getDay()));
+        nextWeek.setHours(23, 59, 59, 999);
+
         const newUserMissions = missingMissions.map(m => ({
           user_id: user.id,
           mission_id: m.id,
           progress: 0,
-          completed: false
+          completed: false,
+          expires_at: m.mission_type === "daily" 
+            ? tomorrow.toISOString() 
+            : m.mission_type === "weekly" 
+              ? nextWeek.toISOString() 
+              : null,
         }));
 
         await supabase.from("user_missions").insert(newUserMissions);

@@ -94,52 +94,113 @@ async function updateMissionsProgress(
     // Create missing user missions
     const missingMissions = allMissions.filter(m => !existingMissionIds.includes(m.id));
     if (missingMissions.length > 0) {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+
+      const nextWeek = new Date(now);
+      nextWeek.setDate(nextWeek.getDate() + (7 - now.getDay()));
+      nextWeek.setHours(23, 59, 59, 999);
+
       await supabase.from("user_missions").insert(
         missingMissions.map(m => ({
           user_id: userId,
           mission_id: m.id,
           progress: 0,
           completed: false,
+          expires_at: m.mission_type === "daily" 
+            ? tomorrow.toISOString() 
+            : m.mission_type === "weekly" 
+              ? nextWeek.toISOString() 
+              : null,
         }))
       );
+      
+      // Refetch after creating
+      const { data: refreshedMissions } = await supabase
+        .from("user_missions")
+        .select("*")
+        .eq("user_id", userId);
+      
+      if (refreshedMissions) {
+        userMissions?.push(...refreshedMissions.filter(rm => 
+          missingMissions.some(mm => mm.id === rm.mission_id)
+        ));
+      }
     }
 
-    // Update progress for each mission type
+    const now = new Date();
+    
+    // Update progress for each mission
     for (const mission of allMissions) {
       const userMission = userMissions?.find(um => um.mission_id === mission.id);
-      if (!userMission || userMission.completed) continue;
+      if (!userMission) continue;
+
+      // Check if daily/weekly mission has expired and needs reset
+      if (userMission.expires_at) {
+        const expiresAt = new Date(userMission.expires_at);
+        if (now > expiresAt) {
+          // Reset the mission
+          const tomorrow = new Date(now);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          tomorrow.setHours(0, 0, 0, 0);
+
+          const nextWeek = new Date(now);
+          nextWeek.setDate(nextWeek.getDate() + (7 - now.getDay()));
+          nextWeek.setHours(23, 59, 59, 999);
+
+          await supabase
+            .from("user_missions")
+            .update({
+              progress: 0,
+              completed: false,
+              completed_at: null,
+              expires_at: mission.mission_type === "daily" 
+                ? tomorrow.toISOString() 
+                : nextWeek.toISOString(),
+            })
+            .eq("id", userMission.id);
+          
+          // Update local reference
+          userMission.progress = 0;
+          userMission.completed = false;
+        }
+      }
+
+      if (userMission.completed) continue;
 
       let newProgress = userMission.progress;
       let shouldComplete = false;
 
-      switch (mission.mission_type) {
-        case "daily":
-          // Daily missions: complete X reviews today
-          if (mission.title.includes("gennemgang") || mission.title.includes("review")) {
-            newProgress = userMission.progress + 1;
-            shouldComplete = newProgress >= mission.target_count;
-          }
-          break;
-
-        case "weekly":
-          // Weekly missions: complete X perfect reviews
-          if (mission.title.includes("perfekt") || mission.title.includes("perfect")) {
-            newProgress = stats.perfect_reviews;
-            shouldComplete = newProgress >= mission.target_count;
-          }
-          // Weekly missions: maintain streak
-          if (mission.title.includes("streak")) {
-            newProgress = stats.current_streak;
-            shouldComplete = newProgress >= mission.target_count;
-          }
-          break;
-
-        default:
-          // General missions based on total reviews
-          if (mission.title.includes("gennemgang") || mission.title.includes("review")) {
-            newProgress = stats.total_reviews;
-            shouldComplete = newProgress >= mission.target_count;
-          }
+      // Determine progress based on mission type and title
+      if (mission.mission_type === "daily") {
+        // Daily missions increment on each review
+        if (mission.title.includes("Gennemgå") || mission.title.includes("kort")) {
+          newProgress = userMission.progress + 1;
+          shouldComplete = newProgress >= mission.target_count;
+        }
+      } else if (mission.mission_type === "weekly") {
+        // Weekly missions track total for the week
+        if (mission.title.includes("Gennemgå") || mission.title.includes("kort")) {
+          newProgress = userMission.progress + 1;
+          shouldComplete = newProgress >= mission.target_count;
+        }
+      } else if (mission.mission_type === "permanent") {
+        // Permanent missions track specific achievements
+        if (mission.title.includes("Første")) {
+          // First review
+          newProgress = stats.total_reviews >= 1 ? 1 : 0;
+          shouldComplete = newProgress >= mission.target_count;
+        } else if (mission.title.includes("perfekte")) {
+          // Perfect streak tracking
+          newProgress = stats.perfect_reviews;
+          shouldComplete = newProgress >= mission.target_count;
+        } else if (mission.title.includes("dage i træk")) {
+          // Streak tracking
+          newProgress = stats.current_streak;
+          shouldComplete = newProgress >= mission.target_count;
+        }
       }
 
       // Update the mission
