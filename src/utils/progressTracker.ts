@@ -5,6 +5,8 @@ import { toast } from "sonner";
  * Updates user stats, missions, and achievements after completing a card review
  */
 export async function trackCardCompletion(userId: string, rating: number) {
+  console.log("🎯 trackCardCompletion called:", { userId, rating });
+  
   try {
     // 1. Update or create user stats
     const { data: existingStats } = await supabase
@@ -42,6 +44,8 @@ export async function trackCardCompletion(userId: string, rating: number) {
       updated_at: new Date().toISOString(),
     };
 
+    console.log("📊 Updating stats:", statsUpdate);
+
     if (existingStats) {
       await supabase
         .from("user_stats")
@@ -53,6 +57,8 @@ export async function trackCardCompletion(userId: string, rating: number) {
         .insert(statsUpdate);
     }
 
+    console.log("✅ Stats updated, now updating missions...");
+
     // 2. Update missions progress
     await updateMissionsProgress(userId, {
       total_reviews: statsUpdate.total_reviews,
@@ -60,11 +66,15 @@ export async function trackCardCompletion(userId: string, rating: number) {
       current_streak: statsUpdate.current_streak,
     });
 
+    console.log("✅ Missions updated, now checking achievements...");
+
     // 3. Check and unlock achievements
     await checkAndUnlockAchievements(userId, statsUpdate);
 
+    console.log("✅ trackCardCompletion completed successfully");
+
   } catch (error) {
-    console.error("Error tracking card completion:", error);
+    console.error("❌ Error tracking card completion:", error);
   }
 }
 
@@ -75,19 +85,28 @@ async function updateMissionsProgress(
   userId: string, 
   stats: { total_reviews: number; perfect_reviews: number; current_streak: number }
 ) {
+  console.log("🎯 updateMissionsProgress called with stats:", stats);
+  
   try {
     // Fetch all missions
     const { data: allMissions } = await supabase
       .from("missions")
       .select("*");
 
-    if (!allMissions) return;
+    if (!allMissions) {
+      console.log("⚠️ No missions found");
+      return;
+    }
+
+    console.log("📋 Found missions:", allMissions.length);
 
     // Fetch user's mission progress
     const { data: userMissions } = await supabase
       .from("user_missions")
       .select("*")
       .eq("user_id", userId);
+
+    console.log("📊 User missions:", userMissions?.length || 0);
 
     const existingMissionIds = userMissions?.map(um => um.mission_id) || [];
 
@@ -135,12 +154,25 @@ async function updateMissionsProgress(
     // Update progress for each mission
     for (const mission of allMissions) {
       const userMission = userMissions?.find(um => um.mission_id === mission.id);
-      if (!userMission) continue;
+      if (!userMission) {
+        console.log(`⚠️ No user mission found for: ${mission.title}`);
+        continue;
+      }
+
+      console.log(`🔍 Checking mission: ${mission.title}`, {
+        type: mission.mission_type,
+        currentProgress: userMission.progress,
+        target: mission.target_count,
+        completed: userMission.completed,
+        expiresAt: userMission.expires_at
+      });
 
       // Check if daily/weekly mission has expired and needs reset
       if (userMission.expires_at) {
         const expiresAt = new Date(userMission.expires_at);
         if (now > expiresAt) {
+          console.log(`🔄 Resetting expired mission: ${mission.title}`);
+          
           // Reset the mission
           const tomorrow = new Date(now);
           tomorrow.setDate(tomorrow.getDate() + 1);
@@ -176,15 +208,17 @@ async function updateMissionsProgress(
       // Determine progress based on mission type and title
       if (mission.mission_type === "daily") {
         // Daily missions increment on each review
-        if (mission.title.includes("Gennemgå") || mission.title.includes("kort")) {
+        if (mission.title.includes("Gennemgå") || mission.title.includes("kort") || mission.title.includes("Daglig")) {
           newProgress = userMission.progress + 1;
           shouldComplete = newProgress >= mission.target_count;
+          console.log(`📈 Daily mission progress: ${newProgress}/${mission.target_count}`);
         }
       } else if (mission.mission_type === "weekly") {
         // Weekly missions track total for the week
-        if (mission.title.includes("Gennemgå") || mission.title.includes("kort")) {
+        if (mission.title.includes("Gennemgå") || mission.title.includes("kort") || mission.title.includes("Ugens")) {
           newProgress = userMission.progress + 1;
           shouldComplete = newProgress >= mission.target_count;
+          console.log(`📈 Weekly mission progress: ${newProgress}/${mission.target_count}`);
         }
       } else if (mission.mission_type === "permanent") {
         // Permanent missions track specific achievements
@@ -192,14 +226,17 @@ async function updateMissionsProgress(
           // First review
           newProgress = stats.total_reviews >= 1 ? 1 : 0;
           shouldComplete = newProgress >= mission.target_count;
-        } else if (mission.title.includes("perfekte")) {
+          console.log(`📈 First review mission: ${newProgress}/${mission.target_count}`);
+        } else if (mission.title.includes("perfekte") || mission.title.includes("Perfektionist")) {
           // Perfect streak tracking
           newProgress = stats.perfect_reviews;
           shouldComplete = newProgress >= mission.target_count;
-        } else if (mission.title.includes("dage i træk")) {
+          console.log(`📈 Perfect reviews mission: ${newProgress}/${mission.target_count}`);
+        } else if (mission.title.includes("dage i træk") || mission.title.includes("Dedikeret")) {
           // Streak tracking
           newProgress = stats.current_streak;
           shouldComplete = newProgress >= mission.target_count;
+          console.log(`📈 Streak mission: ${newProgress}/${mission.target_count}`);
         }
       }
 
@@ -209,6 +246,8 @@ async function updateMissionsProgress(
       if (shouldComplete && !userMission.completed) {
         updates.completed = true;
         updates.completed_at = new Date().toISOString();
+        
+        console.log(`🎉 Mission completed: ${mission.title}`);
         
         // Award points
         const { data: currentStats } = await supabase
@@ -226,6 +265,8 @@ async function updateMissionsProgress(
 
         toast.success(`🎉 Mission fuldført: ${mission.title}! +${mission.reward_points} points`);
       }
+
+      console.log(`💾 Updating mission ${mission.title} with:`, updates);
 
       await supabase
         .from("user_missions")
