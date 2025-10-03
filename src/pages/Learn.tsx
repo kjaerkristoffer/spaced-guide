@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import FlashCard from "@/components/FlashCard";
 import QuizCard from "@/components/QuizCard";
 import FillBlankCard from "@/components/FillBlankCard";
+import { trackCardCompletion } from "@/utils/progressTracker";
 
 interface Card {
   id: string;
@@ -115,14 +116,15 @@ const Learn = () => {
     
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
       
       // Check if progress exists
       const { data: existingProgress } = await supabase
         .from("user_progress")
         .select("*")
-        .eq("user_id", user?.id)
+        .eq("user_id", user.id)
         .eq("card_id", card.id)
-        .single();
+        .maybeSingle();
 
       const currentMastery = existingProgress?.mastery_level || 0;
       const newMastery = Math.min(5, currentMastery + masteryIncrease);
@@ -145,7 +147,7 @@ const Learn = () => {
         await supabase
           .from("user_progress")
           .insert({
-            user_id: user?.id,
+            user_id: user.id,
             card_id: card.id,
             mastery_level: newMastery,
             last_reviewed: now.toISOString(),
@@ -153,6 +155,9 @@ const Learn = () => {
             review_count: 1,
           });
       }
+
+      // Track completion for missions and achievements
+      await trackCardCompletion(user.id, rating);
 
       // Move to next card
       if (currentIndex < cards.length - 1) {

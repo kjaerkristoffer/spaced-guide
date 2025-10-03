@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import FlashCard from "@/components/FlashCard";
 import QuizCard from "@/components/QuizCard";
 import FillBlankCard from "@/components/FillBlankCard";
+import { trackCardCompletion } from "@/utils/progressTracker";
 
 interface ReviewCard {
   id: string;
@@ -151,6 +152,9 @@ const Review = () => {
     nextReview.setDate(nextReview.getDate() + daysToAdd);
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
       await supabase
         .from("user_progress")
         .update({
@@ -160,6 +164,9 @@ const Review = () => {
           review_count: card.review_count + 1,
         })
         .eq("id", card.id);
+
+      // Track completion for missions and achievements
+      await trackCardCompletion(user.id, rating);
 
       if (currentIndex < reviewCards.length - 1) {
         setCurrentIndex(currentIndex + 1);
