@@ -98,11 +98,13 @@ const Dashboard = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
+      if (!user) return;
+
       // Get all cards with their topics grouped by path
       const { data: allCards, error: cardsError } = await supabase
         .from("cards")
         .select("id, learning_path_id, topic")
-        .eq("user_id", user?.id);
+        .eq("user_id", user.id);
 
       if (cardsError) throw cardsError;
 
@@ -110,13 +112,13 @@ const Dashboard = () => {
       const { data: progress, error: progressError } = await supabase
         .from("user_progress")
         .select("card_id")
-        .eq("user_id", user?.id);
+        .eq("user_id", user.id);
 
       if (progressError) throw progressError;
 
       const reviewedCardIds = new Set(progress?.map(p => p.card_id) || []);
       
-      // Group cards by path and topic
+      // Group cards by path and topic - exactly like LearningPath.tsx
       const pathTopicStats: Record<string, Record<string, { total: number; reviewed: number }>> = {};
 
       allCards?.forEach(card => {
@@ -132,18 +134,21 @@ const Dashboard = () => {
         }
       });
 
-      // Calculate percentage based on completed topics (topics where all cards are reviewed)
+      // Calculate percentage based on completed topics - exactly like LearningPath.tsx (line 104-109)
       const progressPct: Record<string, number> = {};
-      Object.entries(pathTopicStats).forEach(([pathId, topics]) => {
+      Object.entries(pathTopicStats).forEach(([pathId, topicStats]) => {
         let completedTopics = 0;
-        const totalTopics = Object.keys(topics).length;
+        const totalTopics = Object.keys(topicStats).length;
         
-        Object.values(topics).forEach(stats => {
-          if (stats.reviewed === stats.total && stats.total > 0) {
+        // Count how many topics are 100% complete
+        Object.values(topicStats).forEach(stats => {
+          const pct = stats.total > 0 ? (stats.reviewed / stats.total) * 100 : 0;
+          if (pct === 100) {
             completedTopics++;
           }
         });
         
+        // Progress is: completed topics / total topics
         progressPct[pathId] = totalTopics > 0 ? (completedTopics / totalTopics) * 100 : 0;
       });
 
