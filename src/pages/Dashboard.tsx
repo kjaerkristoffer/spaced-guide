@@ -97,10 +97,17 @@ const Dashboard = () => {
   const fetchPathProgress = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-
       if (!user) return;
 
-      // Get all cards with their topics grouped by path
+      // Get all learning paths to know total topics
+      const { data: paths, error: pathsError } = await supabase
+        .from("learning_paths")
+        .select("id, structure")
+        .eq("user_id", user.id);
+
+      if (pathsError) throw pathsError;
+
+      // Get all cards with their topics
       const { data: allCards, error: cardsError } = await supabase
         .from("cards")
         .select("id, learning_path_id, topic")
@@ -108,7 +115,7 @@ const Dashboard = () => {
 
       if (cardsError) throw cardsError;
 
-      // Get all progress (any card that has been reviewed at least once)
+      // Get all progress
       const { data: progress, error: progressError } = await supabase
         .from("user_progress")
         .select("card_id")
@@ -118,7 +125,7 @@ const Dashboard = () => {
 
       const reviewedCardIds = new Set(progress?.map(p => p.card_id) || []);
       
-      // Group cards by path and topic - exactly like LearningPath.tsx
+      // Group cards by path and topic
       const pathTopicStats: Record<string, Record<string, { total: number; reviewed: number }>> = {};
 
       allCards?.forEach(card => {
@@ -134,13 +141,16 @@ const Dashboard = () => {
         }
       });
 
-      // Calculate percentage based on completed topics - exactly like LearningPath.tsx (line 104-109)
+      // Calculate progress - EXACTLY like LearningPath.tsx
       const progressPct: Record<string, number> = {};
-      Object.entries(pathTopicStats).forEach(([pathId, topicStats]) => {
-        let completedTopics = 0;
-        const totalTopics = Object.keys(topicStats).length;
+      paths?.forEach(path => {
+        const structure = path.structure as any;
+        const totalTopicsInStructure = structure?.topics?.length || 0;
+        const topicStats = pathTopicStats[path.id] || {};
         
-        // Count how many topics are 100% complete
+        let completedTopics = 0;
+        
+        // Count how many topics are 100% complete (exactly like LearningPath line 104-109)
         Object.values(topicStats).forEach(stats => {
           const pct = stats.total > 0 ? (stats.reviewed / stats.total) * 100 : 0;
           if (pct === 100) {
@@ -148,8 +158,10 @@ const Dashboard = () => {
           }
         });
         
-        // Progress is: completed topics / total topics
-        progressPct[pathId] = totalTopics > 0 ? (completedTopics / totalTopics) * 100 : 0;
+        // Progress is: completed topics / ALL topics in structure (exactly like LearningPath line 240)
+        progressPct[path.id] = totalTopicsInStructure > 0 
+          ? (completedTopics / totalTopicsInStructure) * 100 
+          : 0;
       });
 
       setPathProgress(progressPct);
