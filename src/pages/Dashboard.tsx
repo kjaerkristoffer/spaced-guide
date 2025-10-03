@@ -311,8 +311,7 @@ const Dashboard = () => {
         <div className="mb-12 grid gap-6 md:grid-cols-2 max-w-5xl mx-auto">
           {/* Learning Area Card */}
           <Card 
-            className="group relative overflow-hidden border-2 hover:border-primary transition-all duration-300 cursor-pointer hover:shadow-[var(--shadow-elevated)]"
-            onClick={() => navigate("/learn")}
+            className="group relative overflow-hidden border-2 hover:border-primary transition-all duration-300"
           >
             <div className="absolute inset-0 opacity-5" style={{ background: "var(--gradient-primary)" }} />
             <CardHeader className="relative pb-4">
@@ -325,17 +324,19 @@ const Dashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="relative pt-6">
-              <Button 
-                size="lg"
-                className="w-full text-lg h-14 group-hover:scale-105 transition-transform" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate("/learn");
-                }}
-              >
-                <BookOpen className="w-5 h-5 mr-2" />
-                Start Læring
-              </Button>
+              <p className="text-sm text-muted-foreground mb-4">
+                Se dine læringsstier nedenfor og tryk på en for at fortsætte læringen
+              </p>
+              <div className="flex gap-2">
+                <Button 
+                  size="lg"
+                  variant="outline"
+                  className="flex-1 text-base h-12" 
+                  onClick={() => document.getElementById('learning-paths')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  Se Mine Stier
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
@@ -442,7 +443,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <div className="flex items-center justify-between mb-6">
+        <div id="learning-paths" className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Dine Læringsstier</h2>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
