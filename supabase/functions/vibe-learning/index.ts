@@ -65,7 +65,7 @@ serve(async (req) => {
       }
     }
 
-    // Build conversation messages
+    // Build conversation messages with strict instructions about video URLs
     const messages = [
       {
         role: "system",
@@ -73,13 +73,19 @@ serve(async (req) => {
 
 Funktioner du kan tilbyde:
 1. **Forklare koncepter** på forskellige måder (analogier, eksempler, forenklinger)
-2. **YouTube video anbefalinger** - find relevante danske eller engelske undervisningsvideoer
+2. **YouTube video søgning** - foreslå SØGEORD til YouTube, ikke specifikke videoer
 3. **Generere øvelseskort** - lav quiz, flashcards eller udfyld-hullet øvelser på emnet
 4. **Udforske relaterede emner** - hjælp eleven med at se sammenhænge
 5. **Personaliseret feedback** - tilpas svar til elevens niveau og læringsstil
 
-Når du anbefaler YouTube videoer, format dem sådan:
-[VIDEO: Titel på videoen | URL: https://youtube.com/watch?v=xxx]
+KRITISK VIGTIGT: Du kan IKKE søge efter eller finde specifikke YouTube videoer. I stedet skal du:
+- Foreslå SØGEORD som eleven kan bruge på YouTube
+- Beskriv hvilken TYPE video der ville være nyttig
+- Format søgeforslag sådan: [YOUTUBE_SEARCH: søgeord her]
+
+For eksempel:
+- [YOUTUBE_SEARCH: raketvidenskab for begyndere dansk]
+- [YOUTUBE_SEARCH: space travel explained simply]
 
 Når du foreslår øvelseskort, format dem sådan:
 [PRACTICE: Beskrivelse af øvelsen]
@@ -143,13 +149,14 @@ ${contextInfo}`
     // Parse resources from response
     const resources: any[] = [];
     
-    // Extract YouTube videos
-    const videoMatches = aiResponse.matchAll(/\[VIDEO: ([^\|]+) \| URL: ([^\]]+)\]/g);
-    for (const match of videoMatches) {
+    // Extract YouTube search suggestions
+    const searchMatches = aiResponse.matchAll(/\[YOUTUBE_SEARCH: ([^\]]+)\]/g);
+    for (const match of searchMatches) {
+      const searchTerm = match[1].trim();
       resources.push({
         type: "youtube",
-        title: match[1].trim(),
-        url: match[2].trim()
+        title: `Søg på YouTube: "${searchTerm}"`,
+        url: `https://www.youtube.com/results?search_query=${encodeURIComponent(searchTerm)}`
       });
     }
 
@@ -173,7 +180,7 @@ ${contextInfo}`
 
     // Clean response text from markup
     let cleanResponse = aiResponse
-      .replace(/\[VIDEO: [^\]]+\]/g, '')
+      .replace(/\[YOUTUBE_SEARCH: [^\]]+\]/g, '')
       .replace(/\[PRACTICE: [^\]]+\]/g, '')
       .replace(/\[CONCEPT: [^\]]+\]/g, '')
       .trim();
