@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Check, X } from "lucide-react";
 
 interface FillBlankCardProps {
@@ -11,18 +10,78 @@ interface FillBlankCardProps {
 }
 
 const FillBlankCard = ({ question, answer, onRate }: FillBlankCardProps) => {
-  const [userAnswer, setUserAnswer] = useState("");
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
-  const isCorrect = userAnswer.trim().toLowerCase() === answer.trim().toLowerCase();
 
-  const handleSubmit = () => {
-    setRevealed(true);
+  // Generate distractors (wrong options) based on the answer
+  const options = useMemo(() => {
+    const distractors: string[] = [];
+    const answerWords = answer.toLowerCase().split(' ');
+    
+    // Simple distractor generation strategies
+    const strategies = [
+      // Strategy 1: Similar sounding/looking words
+      () => answer + 's',
+      () => answer + 'e',
+      () => answer.replace(/e$/, ''),
+      // Strategy 2: Random common words
+      () => ['ikke', 'meget', 'altid', 'aldrig', 'måske'][Math.floor(Math.random() * 5)],
+      () => ['være', 'have', 'blive', 'kunne', 'skulle'][Math.floor(Math.random() * 5)],
+    ];
+    
+    // Generate 3 distractors
+    while (distractors.length < 3) {
+      const strategy = strategies[Math.floor(Math.random() * strategies.length)];
+      const distractor = strategy();
+      if (distractor !== answer && !distractors.includes(distractor)) {
+        distractors.push(distractor);
+      }
+    }
+    
+    // Combine correct answer with distractors and shuffle
+    const allOptions = [answer, ...distractors];
+    return allOptions.sort(() => Math.random() - 0.5);
+  }, [answer]);
+
+  const isCorrect = selectedAnswer?.trim().toLowerCase() === answer.trim().toLowerCase();
+
+  const handleSelectOption = (option: string) => {
+    setSelectedAnswer(option);
+    setTimeout(() => setRevealed(true), 300);
   };
 
   const handleRate = (rating: number) => {
     onRate(rating);
-    setUserAnswer("");
+    setSelectedAnswer(null);
     setRevealed(false);
+  };
+
+  // Replace blank marker with selected answer or placeholder
+  const renderQuestion = () => {
+    const blankMarker = '___';
+    if (question.includes(blankMarker)) {
+      const parts = question.split(blankMarker);
+      return (
+        <p className="text-lg font-medium leading-relaxed">
+          {parts[0]}
+          <span 
+            className={`inline-block min-w-[120px] mx-2 px-4 py-1 rounded-md border-2 transition-all duration-300 ${
+              selectedAnswer
+                ? revealed && isCorrect 
+                  ? 'border-green-500 bg-green-500/20 text-green-700 font-semibold'
+                  : revealed && !isCorrect
+                  ? 'border-red-500 bg-red-500/20 text-red-700 font-semibold'
+                  : 'border-primary bg-primary/10 text-primary animate-pulse'
+                : 'border-dashed border-muted-foreground/30 bg-muted/30'
+            }`}
+          >
+            {selectedAnswer || '?'}
+          </span>
+          {parts[1]}
+        </p>
+      );
+    }
+    return <p className="text-lg font-medium">{question}</p>;
   };
 
   return (
@@ -32,26 +91,32 @@ const FillBlankCard = ({ question, answer, onRate }: FillBlankCardProps) => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="p-6 rounded-lg bg-secondary/50 text-center">
-          <p className="text-lg font-medium">{question}</p>
+          {renderQuestion()}
         </div>
 
         {!revealed ? (
           <div className="space-y-4">
-            <Input
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
-              placeholder="Indtast dit svar..."
-              className="text-center text-lg"
-              autoFocus
-            />
-            <Button
-              onClick={handleSubmit}
-              className="w-full"
-              disabled={!userAnswer.trim()}
-            >
-              Indsend Svar
-            </Button>
+            <p className="text-sm text-center text-muted-foreground">
+              Vælg det rigtige ord
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {options.map((option, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  size="lg"
+                  onClick={() => handleSelectOption(option)}
+                  disabled={selectedAnswer !== null}
+                  className={`h-auto py-4 text-base font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg ${
+                    selectedAnswer === option
+                      ? 'opacity-0 scale-50'
+                      : 'opacity-100 scale-100'
+                  }`}
+                >
+                  {option}
+                </Button>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
@@ -71,7 +136,7 @@ const FillBlankCard = ({ question, answer, onRate }: FillBlankCardProps) => {
               </div>
               {!isCorrect && (
                 <p className="text-center">
-                  Dit svar: <span className="font-medium">{userAnswer}</span>
+                  Dit svar: <span className="font-medium">{selectedAnswer}</span>
                   <br />
                   Korrekt svar: <span className="font-medium">{answer}</span>
                 </p>
