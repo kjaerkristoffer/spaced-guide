@@ -188,40 +188,50 @@ const SpacedRepetition = () => {
 
   const handleRate = async (rating: number) => {
     const card = reviewCards[currentIndex];
-    const now = new Date();
-    const intervals = [1, 3, 7, 14, 30];
-    const masteryIncrease = rating >= 3 ? 1 : 0;
-    const newMastery = Math.min(5, card.mastery_level + masteryIncrease);
-    const daysToAdd = intervals[Math.min(newMastery, intervals.length - 1)];
-    const nextReview = new Date(now);
-    nextReview.setDate(nextReview.getDate() + daysToAdd);
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      await supabase
-        .from("user_progress")
-        .update({
-          mastery_level: newMastery,
-          last_reviewed: now.toISOString(),
-          next_review: nextReview.toISOString(),
-          review_count: card.review_count + 1,
-        })
-        .eq("id", card.id);
-
-      await trackCardCompletion(user.id, rating);
-
-      if (currentIndex < reviewCards.length - 1) {
-        setCurrentIndex(currentIndex + 1);
-      } else {
-        toast.success("Alle gennemgange fuldført!");
-        await fetchData();
-        setCurrentIndex(0);
-      }
-    } catch (error: any) {
-      toast.error("Kunne ikke gemme fremskridt");
+    const isLastCard = currentIndex >= reviewCards.length - 1;
+    
+    // Immediately move to next card or refresh
+    if (!isLastCard) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      toast.success("Alle gennemgange fuldført!");
+      setCurrentIndex(0);
+      // Refresh data in background
+      fetchData();
     }
+    
+    // Run database updates in background (non-blocking)
+    const updateProgress = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const now = new Date();
+        const intervals = [1, 3, 7, 14, 30];
+        const masteryIncrease = rating >= 3 ? 1 : 0;
+        const newMastery = Math.min(5, card.mastery_level + masteryIncrease);
+        const daysToAdd = intervals[Math.min(newMastery, intervals.length - 1)];
+        const nextReview = new Date(now);
+        nextReview.setDate(nextReview.getDate() + daysToAdd);
+
+        await supabase
+          .from("user_progress")
+          .update({
+            mastery_level: newMastery,
+            last_reviewed: now.toISOString(),
+            next_review: nextReview.toISOString(),
+            review_count: card.review_count + 1,
+          })
+          .eq("id", card.id);
+
+        await trackCardCompletion(user.id, rating);
+      } catch (error: any) {
+        console.error("Error updating progress:", error);
+      }
+    };
+    
+    // Fire and forget - don't await
+    updateProgress();
   };
 
   const getMasteryColor = (level: number) => {

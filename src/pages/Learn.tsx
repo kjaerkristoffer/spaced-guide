@@ -108,68 +108,73 @@ const Learn = () => {
 
   const handleRate = async (rating: number) => {
     const card = cards[currentIndex];
+    const isLastCard = currentIndex >= cards.length - 1;
     
-    // Calculate next review date based on rating (simplified spaced repetition)
-    const now = new Date();
-    const intervals = [1, 3, 7, 14, 30]; // days
-    const masteryIncrease = rating >= 3 ? 1 : 0;
-    
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      
-      // Check if progress exists
-      const { data: existingProgress } = await supabase
-        .from("user_progress")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("card_id", card.id)
-        .maybeSingle();
-
-      const currentMastery = existingProgress?.mastery_level || 0;
-      const newMastery = Math.min(5, currentMastery + masteryIncrease);
-      const daysToAdd = intervals[Math.min(newMastery, intervals.length - 1)];
-      
-      const nextReview = new Date(now);
-      nextReview.setDate(nextReview.getDate() + daysToAdd);
-
-      if (existingProgress) {
-        await supabase
-          .from("user_progress")
-          .update({
-            mastery_level: newMastery,
-            last_reviewed: now.toISOString(),
-            next_review: nextReview.toISOString(),
-            review_count: existingProgress.review_count + 1,
-          })
-          .eq("id", existingProgress.id);
-      } else {
-        await supabase
-          .from("user_progress")
-          .insert({
-            user_id: user.id,
-            card_id: card.id,
-            mastery_level: newMastery,
-            last_reviewed: now.toISOString(),
-            next_review: nextReview.toISOString(),
-            review_count: 1,
-          });
-      }
-
-      // Track completion for missions and achievements
-      await trackCardCompletion(user.id, rating);
-
-      // Move to next card
-      if (currentIndex < cards.length - 1) {
-        setCurrentIndex(currentIndex + 1);
-      } else {
-        toast.success("Emne fuldført!");
-        navigate(`/path/${pathId}`);
-      }
-    } catch (error: any) {
-      console.error("Error updating progress:", error);
-      toast.error("Kunne ikke gemme fremskridt");
+    // Immediately move to next card or complete
+    if (!isLastCard) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      toast.success("Emne fuldført!");
+      navigate(`/path/${pathId}`);
     }
+    
+    // Run database updates in background (non-blocking)
+    const updateProgress = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        
+        const now = new Date();
+        const intervals = [1, 3, 7, 14, 30]; // days
+        const masteryIncrease = rating >= 3 ? 1 : 0;
+        
+        // Check if progress exists
+        const { data: existingProgress } = await supabase
+          .from("user_progress")
+          .select("*")
+          .eq("user_id", user.id)
+          .eq("card_id", card.id)
+          .maybeSingle();
+
+        const currentMastery = existingProgress?.mastery_level || 0;
+        const newMastery = Math.min(5, currentMastery + masteryIncrease);
+        const daysToAdd = intervals[Math.min(newMastery, intervals.length - 1)];
+        
+        const nextReview = new Date(now);
+        nextReview.setDate(nextReview.getDate() + daysToAdd);
+
+        if (existingProgress) {
+          await supabase
+            .from("user_progress")
+            .update({
+              mastery_level: newMastery,
+              last_reviewed: now.toISOString(),
+              next_review: nextReview.toISOString(),
+              review_count: existingProgress.review_count + 1,
+            })
+            .eq("id", existingProgress.id);
+        } else {
+          await supabase
+            .from("user_progress")
+            .insert({
+              user_id: user.id,
+              card_id: card.id,
+              mastery_level: newMastery,
+              last_reviewed: now.toISOString(),
+              next_review: nextReview.toISOString(),
+              review_count: 1,
+            });
+        }
+
+        // Track completion for missions and achievements
+        await trackCardCompletion(user.id, rating);
+      } catch (error: any) {
+        console.error("Error updating progress:", error);
+      }
+    };
+    
+    // Fire and forget - don't await
+    updateProgress();
   };
 
   if (loading) {
