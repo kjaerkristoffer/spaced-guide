@@ -21,7 +21,7 @@ serve(async (req) => {
     console.log("Generating content for topic:", topic, "Reading:", generateReading);
 
     const systemPrompt = generateReading
-      ? `Du er en ekspert underviser. Skab engagerende læseindhold og læringskort på DANSK for det givne emne.
+      ? `Du er en ekspert underviser med 50 års erfaring i pædagogik og didaktik. Skab engagerende læseindhold og udfordrende læringskort på DANSK.
         
         KRITISK: Du SKAL returnere BÅDE "reading" OG "cards" felter i dit svar. Udelad ikke nogen af felterne.
         
@@ -42,16 +42,37 @@ serve(async (req) => {
               "options": ["Mulighed 1 på DANSK", "Mulighed 2 på DANSK", "Mulighed 3 på DANSK", "Mulighed 4 på DANSK"]
             },
             {
-              "question": "Udfyld dette: Hovedstaden i Frankrig er ___",
-              "answer": "Paris",
+              "question": "Den nærmeste planet til Solen er ___",
+              "answer": "Merkur",
               "type": "fill-blank",
-              "options": null
+              "options": ["Merkur", "Venus", "Mars", "Jupiter"]
             }
           ]
         }
         
-        VIGTIGT: Inkluder ALTID BÅDE læseindholdet OG kortene. Bland flashcards, quiz spørgsmål og udfyld-hullet spørgsmål. For quiz spørgsmål, inkluder 4 muligheder hvor svaret er en af dem. ALT SKAL VÆRE PÅ DANSK.`
-      : `Du er en ekspert underviser. Skab læringskort på DANSK for det givne emne.
+        KRITISKE REGLER FOR "FILL-BLANK" KORT:
+        1. Options SKAL ALTID være et array med 4 elementer (inklusiv det korrekte svar)
+        2. Det korrekte svar SKAL være inkluderet i options arrayet
+        3. Distraktorer (forkerte svar) skal være:
+           - Kontekstuelt relevante (fra samme emneområde)
+           - Plausible alternativer (som en elev faktisk kunne forveksle)
+           - Udfordrende (test reel forståelse, ikke gæt-arbejde)
+           - Varierede (forskellige typer fejl: nær-svar, relaterede begreber, almindelige misforståelser)
+        
+        EKSEMPLER PÅ GODE DISTRAKTORER:
+        - Hvis svaret er "Solen": brug andre stjerner eller himmellegemer ("Månen", "Polaris", "Sirius")
+        - Hvis svaret er "fotosyntese": brug andre biologiske processer ("respiration", "transpiration", "celledeling")
+        - Hvis svaret er "1914": brug andre historiske årstal fra samme periode ("1912", "1916", "1918")
+        - Hvis svaret er "ilt": brug andre kemiske grundstoffer ("nitrogen", "brint", "kulstof")
+        
+        DÅRLIGE DISTRAKTORER (undgå disse):
+        - Tilfældige ord uden relation til emnet
+        - Grammatisk forskellige ordtyper (hvis svar er substantiv, skal alle options være substantiver)
+        - Åbenlyse forkerte svar som ingen ville vælge
+        
+        VIGTIGT: Inkluder ALTID BÅDE læseindholdet OG kortene. Bland flashcards, quiz spørgsmål og udfyld-hullet spørgsmål. ALT SKAL VÆRE PÅ DANSK.`
+      : `Du er en ekspert underviser med 50 års erfaring i pædagogik og didaktik. Skab udfordrende læringskort på DANSK.
+        
         Returner KUN gyldig JSON (ingen markdown, ingen kodeblokke) med denne præcise struktur:
         {
           "cards": [
@@ -66,10 +87,37 @@ serve(async (req) => {
               "answer": "Korrekt svar på DANSK",
               "type": "quiz",
               "options": ["Mulighed 1 på DANSK", "Mulighed 2 på DANSK", "Mulighed 3 på DANSK", "Mulighed 4 på DANSK"]
+            },
+            {
+              "question": "Den nærmeste planet til Solen er ___",
+              "answer": "Merkur",
+              "type": "fill-blank",
+              "options": ["Merkur", "Venus", "Mars", "Jupiter"]
             }
           ]
         }
-        Bland flashcards og quiz spørgsmål. For quiz spørgsmål, inkluder 4 muligheder hvor svaret er en af dem. ALT SKAL VÆRE PÅ DANSK.`;
+        
+        KRITISKE REGLER FOR "FILL-BLANK" KORT:
+        1. Options SKAL ALTID være et array med 4 elementer (inklusiv det korrekte svar)
+        2. Det korrekte svar SKAL være inkluderet i options arrayet
+        3. Distraktorer (forkerte svar) skal være:
+           - Kontekstuelt relevante (fra samme emneområde)
+           - Plausible alternativer (som en elev faktisk kunne forveksle)
+           - Udfordrende (test reel forståelse, ikke gæt-arbejde)
+           - Varierede (forskellige typer fejl: nær-svar, relaterede begreber, almindelige misforståelser)
+        
+        EKSEMPLER PÅ GODE DISTRAKTORER:
+        - Hvis svaret er "Solen": brug andre stjerner eller himmellegemer ("Månen", "Polaris", "Sirius")
+        - Hvis svaret er "fotosyntese": brug andre biologiske processer ("respiration", "transpiration", "celledeling")
+        - Hvis svaret er "1914": brug andre historiske årstal fra samme periode ("1912", "1916", "1918")
+        - Hvis svaret er "ilt": brug andre kemiske grundstoffer ("nitrogen", "brint", "kulstof")
+        
+        DÅRLIGE DISTRAKTORER (undgå disse):
+        - Tilfældige ord uden relation til emnet
+        - Grammatisk forskellige ordtyper (hvis svar er substantiv, skal alle options være substantiver)
+        - Åbenlyse forkerte svar som ingen ville vælge
+        
+        Bland flashcards, quiz spørgsmål og udfyld-hullet spørgsmål. ALT SKAL VÆRE PÅ DANSK.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
