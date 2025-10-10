@@ -293,50 +293,50 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl" style={{ background: "var(--gradient-primary)" }}>
-              <Brain className="w-6 h-6 text-white" />
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 rounded-xl" style={{ background: "var(--gradient-primary)" }}>
+              <Brain className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-2xl font-bold">LearnSmart</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">LearnSmart</h1>
           </div>
-          <Button variant="outline" onClick={handleSignOut}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Log Ud
+          <Button variant="outline" size="sm" onClick={handleSignOut} className="text-xs sm:text-sm">
+            <LogOut className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Log Ud</span>
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-12">
-        <div className="mb-12 grid gap-6 md:grid-cols-2 max-w-5xl mx-auto">
+      <main className="container mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12">
+        <div className="mb-6 sm:mb-8 md:mb-12 grid gap-4 sm:gap-6 md:grid-cols-2 max-w-5xl mx-auto">
           {/* Learning Area Card */}
           <Card 
             className="group relative overflow-hidden border-2 border-green-500/30 bg-gradient-to-br from-green-500/5 to-emerald-500/10"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-green-400/10 to-emerald-600/10" />
-            <CardHeader className="relative pb-4">
-              <div className="mb-4 p-3 w-fit rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/20">
-                <BookOpen className="w-8 h-8 text-white" />
+            <CardHeader className="relative pb-3 sm:pb-4">
+              <div className="mb-3 sm:mb-4 p-2 sm:p-3 w-fit rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/20">
+                <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
-              <CardTitle className="text-3xl mb-2 flex items-center gap-2">
+              <CardTitle className="text-2xl sm:text-3xl mb-1 sm:mb-2 flex items-center gap-2">
                 <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                   Læringsområde
                 </span>
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-sm sm:text-base">
                 Udforsk nye emner og opbyg din viden med AI-genererede læringsstier
               </CardDescription>
             </CardHeader>
-            <CardContent className="relative pt-6">
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 mb-4 border border-green-500/20">
-                <p className="text-sm text-muted-foreground">
+            <CardContent className="relative pt-4 sm:pt-6">
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 mb-3 sm:mb-4 border border-green-500/20">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   📚 Se dine læringsstier nedenfor og tryk på en for at fortsætte læringen
                 </p>
               </div>
               <Button 
                 size="lg"
                 variant="outline"
-                className="w-full text-base h-12 border-green-500/50 hover:bg-green-500/10 hover:border-green-500" 
+                className="w-full text-sm sm:text-base h-10 sm:h-12 border-green-500/50 hover:bg-green-500/10 hover:border-green-500" 
                 onClick={() => document.getElementById('learning-paths')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Se Mine Læringsstier
@@ -350,36 +350,36 @@ const Dashboard = () => {
             onClick={() => navigate("/spaced-repetition")}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-blue-600/10" />
-            <CardHeader className="relative pb-4">
-              <div className="mb-4 p-3 w-fit rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 shadow-lg shadow-purple-500/20">
-                <Brain className="w-8 h-8 text-white" />
+            <CardHeader className="relative pb-3 sm:pb-4">
+              <div className="mb-3 sm:mb-4 p-2 sm:p-3 w-fit rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 shadow-lg shadow-purple-500/20">
+                <Brain className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
-              <CardTitle className="text-3xl mb-2 flex items-center gap-2">
+              <CardTitle className="text-2xl sm:text-3xl mb-1 sm:mb-2 flex items-center gap-2">
                 <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                   Spaced Repetition
                 </span>
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-sm sm:text-base">
                 Optimer din hukommelse med videnskabeligt bevist gentagelsesmetode
               </CardDescription>
             </CardHeader>
-            <CardContent className="relative pt-6">
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 mb-4 border border-purple-500/20">
+            <CardContent className="relative pt-4 sm:pt-6">
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 mb-3 sm:mb-4 border border-purple-500/20">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-muted-foreground">Forfalder i dag:</span>
-                  <span className="text-lg font-bold text-purple-500">{dueCardsCount}</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">Forfalder i dag:</span>
+                  <span className="text-base sm:text-lg font-bold text-purple-500">{dueCardsCount}</span>
                 </div>
                 <Progress value={(dueCardsCount / Math.max(dueCardsCount, 1)) * 100} className="h-2" />
               </div>
               <Button 
                 size="lg"
-                className="w-full text-lg h-14 bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 group-hover:scale-105 transition-transform shadow-lg shadow-purple-500/20" 
+                className="w-full text-base sm:text-lg h-11 sm:h-14 bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 group-hover:scale-105 transition-transform shadow-lg shadow-purple-500/20" 
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate("/spaced-repetition");
                 }}
               >
-                <Brain className="w-5 h-5 mr-2" />
+                <Brain className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Start Gennemgang
               </Button>
             </CardContent>
@@ -388,29 +388,29 @@ const Dashboard = () => {
 
         {/* Vibe Learning Card */}
         <Card 
-          className="mb-6 max-w-5xl mx-auto bg-gradient-to-br from-pink-500/10 via-purple-500/10 to-blue-500/10 border-2 border-pink-500/30 hover:border-pink-500/50 transition-all duration-300 cursor-pointer hover:shadow-[0_0_30px_rgba(236,72,153,0.2)]"
+          className="mb-4 sm:mb-6 max-w-5xl mx-auto bg-gradient-to-br from-pink-500/10 via-purple-500/10 to-blue-500/10 border-2 border-pink-500/30 hover:border-pink-500/50 transition-all duration-300 cursor-pointer hover:shadow-[0_0_30px_rgba(236,72,153,0.2)]"
           onClick={() => navigate("/vibe-learning")}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-pink-400/10 to-purple-600/10" />
-          <CardHeader className="relative">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 shadow-lg shadow-pink-500/20">
-                  <Sparkles className="w-6 h-6 text-white" />
+          <CardHeader className="relative pb-3 sm:pb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 flex-1">
+                <div className="p-2 sm:p-3 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 shadow-lg shadow-pink-500/20">
+                  <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <div>
-                  <CardTitle className="text-2xl bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                <div className="flex-1">
+                  <CardTitle className="text-xl sm:text-2xl bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
                     Vibe Learning ✨
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">
                     Chat med AI, få videoer, generer øvelser - personlig læring i dit tempo
                   </CardDescription>
                 </div>
               </div>
               <Button 
                 variant="outline" 
-                size="lg"
-                className="border-pink-500/50 hover:bg-pink-500/10"
+                size="sm"
+                className="border-pink-500/50 hover:bg-pink-500/10 w-full sm:w-auto"
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate("/vibe-learning");
@@ -421,18 +421,18 @@ const Dashboard = () => {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 border border-pink-500/20">
-                <p className="text-xs text-muted-foreground mb-1">💬 Konversationel læring</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-2 sm:p-3 border border-pink-500/20">
+                <p className="text-[10px] sm:text-xs text-muted-foreground">💬 Konversationel læring</p>
               </div>
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 border border-purple-500/20">
-                <p className="text-xs text-muted-foreground mb-1">🎥 Video anbefalinger</p>
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-2 sm:p-3 border border-purple-500/20">
+                <p className="text-[10px] sm:text-xs text-muted-foreground">🎥 Video anbefalinger</p>
               </div>
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 border border-blue-500/20">
-                <p className="text-xs text-muted-foreground mb-1">⚡ Instant øvelser</p>
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-2 sm:p-3 border border-blue-500/20">
+                <p className="text-[10px] sm:text-xs text-muted-foreground">⚡ Instant øvelser</p>
               </div>
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 border border-pink-500/20">
-                <p className="text-xs text-muted-foreground mb-1">🎯 Kontekst-bevidst</p>
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-2 sm:p-3 border border-pink-500/20">
+                <p className="text-[10px] sm:text-xs text-muted-foreground">🎯 Kontekst-bevidst</p>
               </div>
             </div>
           </CardContent>
@@ -440,21 +440,21 @@ const Dashboard = () => {
 
         {/* Missions & Achievements Overview */}
         <Card 
-          className="mb-12 max-w-5xl mx-auto bg-gradient-to-br from-purple-500/10 via-yellow-500/10 to-orange-500/10 border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 cursor-pointer hover:shadow-[var(--shadow-elevated)]"
+          className="mb-6 sm:mb-8 md:mb-12 max-w-5xl mx-auto bg-gradient-to-br from-purple-500/10 via-yellow-500/10 to-orange-500/10 border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 cursor-pointer hover:shadow-[var(--shadow-elevated)]"
           onClick={() => navigate("/missions")}
         >
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500">
-                  <Trophy className="w-6 h-6 text-white" />
+          <CardHeader className="pb-3 sm:pb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 flex-1">
+                <div className="p-2 sm:p-3 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500">
+                  <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <div>
-                  <CardTitle className="text-2xl">Missioner & Achievements</CardTitle>
-                  <CardDescription>Følg din fremgang og lås op for belønninger</CardDescription>
+                <div className="flex-1">
+                  <CardTitle className="text-xl sm:text-2xl">Missioner & Achievements</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">Følg din fremgang og lås op for belønninger</CardDescription>
                 </div>
               </div>
-              <Button variant="outline" size="lg" onClick={(e) => {
+              <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={(e) => {
                 e.stopPropagation();
                 navigate("/missions");
               }}>
@@ -463,37 +463,37 @@ const Dashboard = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 border border-border/50">
-                <div className="flex items-center gap-2 mb-2">
-                  <Star className="w-5 h-5 text-yellow-500 fill-current" />
-                  <span className="text-sm text-muted-foreground">Total Points</span>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-border/50">
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 fill-current" />
+                  <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">Total Points</span>
                 </div>
-                <p className="text-2xl font-bold text-yellow-500">{userStats?.total_points || 0}</p>
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-yellow-500">{userStats?.total_points || 0}</p>
               </div>
               
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 border border-border/50">
-                <div className="flex items-center gap-2 mb-2">
-                  <Flame className="w-5 h-5 text-orange-500" />
-                  <span className="text-sm text-muted-foreground">Streak</span>
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-border/50">
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
+                  <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">Streak</span>
                 </div>
-                <p className="text-2xl font-bold text-orange-500">{userStats?.current_streak || 0} dage</p>
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-orange-500">{userStats?.current_streak || 0} <span className="text-xs sm:text-sm">dage</span></p>
               </div>
               
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 border border-border/50">
-                <div className="flex items-center gap-2 mb-2">
-                  <Target className="w-5 h-5 text-blue-500" />
-                  <span className="text-sm text-muted-foreground">Aktive Missioner</span>
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-border/50">
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <Target className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
+                  <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">Aktive Missioner</span>
                 </div>
-                <p className="text-2xl font-bold text-blue-500">{activeMissions}</p>
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-blue-500">{activeMissions}</p>
               </div>
               
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-4 border border-border/50">
-                <div className="flex items-center gap-2 mb-2">
-                  <Trophy className="w-5 h-5 text-purple-500" />
-                  <span className="text-sm text-muted-foreground">Achievements</span>
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-border/50">
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                  <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
+                  <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">Achievements</span>
                 </div>
-                <p className="text-2xl font-bold text-purple-500">{unlockedAchievements}</p>
+                <p className="text-lg sm:text-xl md:text-2xl font-bold text-purple-500">{unlockedAchievements}</p>
               </div>
             </div>
           </CardContent>
