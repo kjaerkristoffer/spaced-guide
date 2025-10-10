@@ -410,6 +410,7 @@ const SpacedRepetition = () => {
                       key={reviewCards[currentIndex].card_id}
                       question={reviewCards[currentIndex].cards.question}
                       answer={reviewCards[currentIndex].cards.answer}
+                      options={reviewCards[currentIndex].cards.options || []}
                       onRate={handleRate}
                     />
                   )}

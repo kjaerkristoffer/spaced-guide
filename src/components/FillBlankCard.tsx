@@ -6,42 +6,36 @@ import { Check, X } from "lucide-react";
 interface FillBlankCardProps {
   question: string;
   answer: string;
+  options?: string[] | null;
   onRate: (rating: number) => void;
 }
 
-const FillBlankCard = ({ question, answer, onRate }: FillBlankCardProps) => {
+const FillBlankCard = ({ question, answer, options: providedOptions, onRate }: FillBlankCardProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
 
-  // Generate distractors (wrong options) based on the answer
+  // Use provided options or generate contextually relevant ones
   const options = useMemo(() => {
-    const distractors: string[] = [];
-    const answerWords = answer.toLowerCase().split(' ');
-    
-    // Simple distractor generation strategies
-    const strategies = [
-      // Strategy 1: Similar sounding/looking words
-      () => answer + 's',
-      () => answer + 'e',
-      () => answer.replace(/e$/, ''),
-      // Strategy 2: Random common words
-      () => ['ikke', 'meget', 'altid', 'aldrig', 'måske'][Math.floor(Math.random() * 5)],
-      () => ['være', 'have', 'blive', 'kunne', 'skulle'][Math.floor(Math.random() * 5)],
-    ];
-    
-    // Generate 3 distractors
-    while (distractors.length < 3) {
-      const strategy = strategies[Math.floor(Math.random() * strategies.length)];
-      const distractor = strategy();
-      if (distractor !== answer && !distractors.includes(distractor)) {
-        distractors.push(distractor);
-      }
+    // If options are provided from database (AI-generated), use those
+    if (providedOptions && providedOptions.length > 0) {
+      // Ensure correct answer is included and shuffle
+      const allOptions = providedOptions.includes(answer) 
+        ? [...providedOptions]
+        : [answer, ...providedOptions.slice(0, 3)];
+      return allOptions.sort(() => Math.random() - 0.5);
     }
     
-    // Combine correct answer with distractors and shuffle
+    // Fallback: Generate basic distractors (this should rarely happen)
+    // In a real scenario, options should always come from the AI generation
+    const distractors = [
+      answer + 'en',
+      answer.replace(/en$/, ''),
+      'Ingen af delene'
+    ];
+    
     const allOptions = [answer, ...distractors];
     return allOptions.sort(() => Math.random() - 0.5);
-  }, [answer]);
+  }, [answer, providedOptions]);
 
   const isCorrect = selectedAnswer?.trim().toLowerCase() === answer.trim().toLowerCase();
 

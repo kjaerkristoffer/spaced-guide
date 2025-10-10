@@ -293,6 +293,7 @@ const Learn = () => {
               key={currentCard.id}
               question={currentCard.question}
               answer={currentCard.answer}
+              options={currentCard.options || []}
               onRate={handleRate}
             />
           )}
