@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2, CheckCircle2, Trash2, Trophy, Star, Flame, Target } from "lucide-react";
+import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2, CheckCircle2, Trash2, Trophy, Star, Flame, Target, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -385,6 +385,58 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Vibe Learning Card */}
+        <Card 
+          className="mb-6 max-w-5xl mx-auto bg-gradient-to-br from-pink-500/10 via-purple-500/10 to-blue-500/10 border-2 border-pink-500/30 hover:border-pink-500/50 transition-all duration-300 cursor-pointer hover:shadow-[0_0_30px_rgba(236,72,153,0.2)]"
+          onClick={() => navigate("/vibe-learning")}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-400/10 to-purple-600/10" />
+          <CardHeader className="relative">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 shadow-lg shadow-pink-500/20">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
+                    Vibe Learning ✨
+                  </CardTitle>
+                  <CardDescription>
+                    Chat med AI, få videoer, generer øvelser - personlig læring i dit tempo
+                  </CardDescription>
+                </div>
+              </div>
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="border-pink-500/50 hover:bg-pink-500/10"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/vibe-learning");
+                }}
+              >
+                Start Chat
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="relative">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 border border-pink-500/20">
+                <p className="text-xs text-muted-foreground mb-1">💬 Konversationel læring</p>
+              </div>
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 border border-purple-500/20">
+                <p className="text-xs text-muted-foreground mb-1">🎥 Video anbefalinger</p>
+              </div>
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 border border-blue-500/20">
+                <p className="text-xs text-muted-foreground mb-1">⚡ Instant øvelser</p>
+              </div>
+              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 border border-pink-500/20">
+                <p className="text-xs text-muted-foreground mb-1">🎯 Kontekst-bevidst</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Missions & Achievements Overview */}
         <Card 
