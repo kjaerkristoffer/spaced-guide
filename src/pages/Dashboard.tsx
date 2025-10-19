@@ -360,7 +360,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       {/* Dark Header inspired by reference */}
       <header className="bg-foreground text-background border-b border-border/10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
