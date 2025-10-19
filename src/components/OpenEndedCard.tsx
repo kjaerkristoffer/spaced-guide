@@ -84,7 +84,7 @@ const OpenEndedCard = ({ question, topic, onRate, isLastQuestion = false }: Open
             />
 
             {!evaluation && (
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   onClick={handleSubmit}
                   disabled={answer.trim().length < 50 || isEvaluating}
@@ -106,6 +106,7 @@ const OpenEndedCard = ({ question, topic, onRate, isLastQuestion = false }: Open
                     disabled={isEvaluating}
                     variant="outline"
                     size="lg"
+                    className="sm:w-auto"
                   >
                     Spring dette over
                   </Button>

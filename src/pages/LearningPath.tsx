@@ -352,15 +352,17 @@ Skab en ny læringssti der bygger videre på den tidligere viden og matcher brug
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="text-base font-semibold leading-tight">
-                        {topic.title}
-                      </h3>
+                    <div className="flex flex-col gap-2 mb-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="text-base font-semibold leading-tight">
+                          {topic.title}
+                        </h3>
+                      </div>
                       <Button
                         onClick={() => startTopic(topic)}
                         disabled={generatingCards === topic.title}
                         size="sm"
-                        className={`flex-shrink-0 ${
+                        className={`w-full ${
                           isCompleted 
                             ? 'bg-background text-foreground border hover:bg-accent' 
                             : isInProgress 
