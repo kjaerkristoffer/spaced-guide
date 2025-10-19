@@ -3,16 +3,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Lightbulb } from "lucide-react";
+import { MnemonicDialog } from "./MnemonicDialog";
 
 interface OpenEndedCardProps {
   question: string;
   topic: string;
   onRate: (rating: number) => void;
   isLastQuestion?: boolean;
+  learningPathId?: string;
 }
 
-const OpenEndedCard = ({ question, topic, onRate, isLastQuestion = false }: OpenEndedCardProps) => {
+const OpenEndedCard = ({ question, topic, onRate, isLastQuestion = false, learningPathId }: OpenEndedCardProps) => {
   const [answer, setAnswer] = useState("");
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluation, setEvaluation] = useState<{
@@ -20,6 +22,7 @@ const OpenEndedCard = ({ question, topic, onRate, isLastQuestion = false }: Open
     feedback: string;
     isGood: boolean;
   } | null>(null);
+  const [mnemonicOpen, setMnemonicOpen] = useState(false);
 
   const handleSubmit = async () => {
     if (!answer.trim() || isEvaluating) return;
@@ -67,7 +70,18 @@ const OpenEndedCard = ({ question, topic, onRate, isLastQuestion = false }: Open
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Card className="shadow-[var(--shadow-elevated)]">
+      <Card className="shadow-[var(--shadow-elevated)] relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-4 right-4 z-10 hover:bg-primary/10"
+          onClick={(e) => {
+            e.stopPropagation();
+            setMnemonicOpen(true);
+          }}
+        >
+          <Lightbulb className="w-5 h-5 text-primary" />
+        </Button>
         <CardContent className="p-6 sm:p-8">
           <div className="mb-6">
             <div className="text-sm text-muted-foreground mb-4">Åbent spørgsmål</div>
@@ -145,6 +159,14 @@ const OpenEndedCard = ({ question, topic, onRate, isLastQuestion = false }: Open
           </div>
         </CardContent>
       </Card>
+
+      <MnemonicDialog
+        open={mnemonicOpen}
+        onOpenChange={setMnemonicOpen}
+        highlightedText={question}
+        learningPathId={learningPathId}
+        context={`Emne: ${topic}\nSpørgsmål: ${question}`}
+      />
     </div>
   );
 };

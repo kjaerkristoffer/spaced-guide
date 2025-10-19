@@ -175,6 +175,57 @@ export type Database = {
         }
         Relationships: []
       }
+      mnemonics: {
+        Row: {
+          card_id: string | null
+          created_at: string
+          highlighted_text: string
+          id: string
+          is_ai_generated: boolean
+          learning_path_id: string | null
+          mnemonic_text: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          card_id?: string | null
+          created_at?: string
+          highlighted_text: string
+          id?: string
+          is_ai_generated?: boolean
+          learning_path_id?: string | null
+          mnemonic_text: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          card_id?: string | null
+          created_at?: string
+          highlighted_text?: string
+          id?: string
+          is_ai_generated?: boolean
+          learning_path_id?: string | null
+          mnemonic_text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mnemonics_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mnemonics_learning_path_id_fkey"
+            columns: ["learning_path_id"]
+            isOneToOne: false
+            referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string

@@ -1,18 +1,22 @@
 import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, X } from "lucide-react";
+import { Check, X, Lightbulb } from "lucide-react";
+import { MnemonicDialog } from "./MnemonicDialog";
 
 interface FillBlankCardProps {
   question: string;
   answer: string;
   options?: string[] | null;
   onRate: (rating: number) => void;
+  cardId?: string;
+  learningPathId?: string;
 }
 
-const FillBlankCard = ({ question, answer, options: providedOptions, onRate }: FillBlankCardProps) => {
+const FillBlankCard = ({ question, answer, options: providedOptions, onRate, cardId, learningPathId }: FillBlankCardProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [mnemonicOpen, setMnemonicOpen] = useState(false);
 
   // Use provided options or generate contextually relevant ones
   const options = useMemo(() => {
@@ -79,7 +83,18 @@ const FillBlankCard = ({ question, answer, options: providedOptions, onRate }: F
   };
 
   return (
-    <Card className="max-w-2xl mx-auto shadow-[var(--shadow-elevated)]">
+    <Card className="max-w-2xl mx-auto shadow-[var(--shadow-elevated)] relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute top-4 right-4 z-10 hover:bg-primary/10"
+        onClick={(e) => {
+          e.stopPropagation();
+          setMnemonicOpen(true);
+        }}
+      >
+        <Lightbulb className="w-5 h-5 text-primary" />
+      </Button>
       <CardHeader>
         <CardTitle className="text-center text-xl">Udfyld Hullet</CardTitle>
       </CardHeader>
@@ -165,6 +180,15 @@ const FillBlankCard = ({ question, answer, options: providedOptions, onRate }: F
           </div>
         )}
       </CardContent>
+
+      <MnemonicDialog
+        open={mnemonicOpen}
+        onOpenChange={setMnemonicOpen}
+        highlightedText={question}
+        cardId={cardId}
+        learningPathId={learningPathId}
+        context={`Spørgsmål: ${question}\nSvar: ${answer}`}
+      />
     </Card>
   );
 };

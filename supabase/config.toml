@@ -5,3 +5,6 @@ verify_jwt = true
 
 [functions.evaluate-answer]
 verify_jwt = true
+
+[functions.generate-mnemonic]
+verify_jwt = true

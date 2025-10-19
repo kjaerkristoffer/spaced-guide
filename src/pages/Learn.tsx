@@ -11,6 +11,7 @@ import QuizCard from "@/components/QuizCard";
 import FillBlankCard from "@/components/FillBlankCard";
 import OpenEndedCard from "@/components/OpenEndedCard";
 import { trackCardCompletion } from "@/utils/progressTracker";
+import { ReadingContent } from "@/components/ReadingContent";
 
 interface Card {
   id: string;
@@ -214,22 +215,10 @@ const Learn = () => {
               </p>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="prose prose-lg dark:prose-invert max-w-none">
-                {readingContent.split('\n\n').map((paragraph, index) => {
-                  // Convert markdown bold (**text**) and italic (*text*) to HTML
-                  const formattedParagraph = paragraph
-                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.+?)\*/g, '<em>$1</em>');
-                  
-                  return (
-                    <p 
-                      key={index} 
-                      className="text-base leading-relaxed mb-4"
-                      dangerouslySetInnerHTML={{ __html: formattedParagraph }}
-                    />
-                  );
-                })}
-              </div>
+              <ReadingContent 
+                content={readingContent} 
+                learningPathId={pathId || undefined}
+              />
               
               <div className="pt-6 border-t">
                 <Button 
@@ -286,6 +275,7 @@ const Learn = () => {
                 topic={topic || ""}
                 onRate={handleRate}
                 isLastQuestion={true}
+                learningPathId={pathId || undefined}
               />
             ) : currentCard ? (
             currentCard.card_type === "flashcard" ? (
@@ -294,6 +284,8 @@ const Learn = () => {
                 question={currentCard.question}
                 answer={currentCard.answer}
                 onRate={handleRate}
+                cardId={currentCard.id}
+                learningPathId={pathId || undefined}
               />
             ) : currentCard.card_type === "quiz" ? (
               <QuizCard
@@ -302,6 +294,8 @@ const Learn = () => {
                 answer={currentCard.answer}
                 options={currentCard.options || []}
                 onRate={handleRate}
+                cardId={currentCard.id}
+                learningPathId={pathId || undefined}
               />
             ) : (
               <FillBlankCard
@@ -310,6 +304,8 @@ const Learn = () => {
                 answer={currentCard.answer}
                 options={currentCard.options || []}
                 onRate={handleRate}
+                cardId={currentCard.id}
+                learningPathId={pathId || undefined}
               />
             )
           ) : null}

@@ -13,6 +13,7 @@ import SpacedRepetition from "./pages/SpacedRepetition";
 import Missions from "./pages/Missions";
 import VibeLearning from "./pages/VibeLearning";
 import CreatePath from "./pages/CreatePath";
+import Mnemonics from "./pages/Mnemonics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/spaced-repetition" element={<SpacedRepetition />} />
           <Route path="/missions" element={<Missions />} />
           <Route path="/vibe-learning" element={<VibeLearning />} />
+          <Route path="/mnemonics" element={<Mnemonics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

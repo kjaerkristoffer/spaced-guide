@@ -1,23 +1,38 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RotateCw } from "lucide-react";
+import { RotateCw, Lightbulb } from "lucide-react";
+import { MnemonicDialog } from "./MnemonicDialog";
 
 interface FlashCardProps {
   question: string;
   answer: string;
   onRate: (rating: number) => void;
+  cardId?: string;
+  learningPathId?: string;
 }
 
-const FlashCard = ({ question, answer, onRate }: FlashCardProps) => {
+const FlashCard = ({ question, answer, onRate, cardId, learningPathId }: FlashCardProps) => {
   const [flipped, setFlipped] = useState(false);
+  const [mnemonicOpen, setMnemonicOpen] = useState(false);
 
   return (
     <div className="max-w-2xl mx-auto">
       <Card 
-        className="cursor-pointer min-h-[300px] shadow-[var(--shadow-elevated)] transition-all hover:shadow-[var(--shadow-card)]"
+        className="cursor-pointer min-h-[300px] shadow-[var(--shadow-elevated)] transition-all hover:shadow-[var(--shadow-card)] relative"
         onClick={() => setFlipped(!flipped)}
       >
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-4 right-4 z-10 hover:bg-primary/10"
+          onClick={(e) => {
+            e.stopPropagation();
+            setMnemonicOpen(true);
+          }}
+        >
+          <Lightbulb className="w-5 h-5 text-primary" />
+        </Button>
         <CardContent className="p-8 flex flex-col items-center justify-center min-h-[300px]">
           <div className="text-center">
             {!flipped ? (
@@ -66,6 +81,15 @@ const FlashCard = ({ question, answer, onRate }: FlashCardProps) => {
           </Button>
         </div>
       )}
+
+      <MnemonicDialog
+        open={mnemonicOpen}
+        onOpenChange={setMnemonicOpen}
+        highlightedText={question}
+        cardId={cardId}
+        learningPathId={learningPathId}
+        context={`Spørgsmål: ${question}\nSvar: ${answer}`}
+      />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2, CheckCircle2, Trash2, Trophy, Star, Flame, Target, Sparkles } from "lucide-react";
+import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2, CheckCircle2, Trash2, Trophy, Star, Flame, Target, Sparkles, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 import { getColorFromString, getIconForTopic } from "@/utils/colorUtils";
 import { Input } from "@/components/ui/input";
@@ -415,6 +415,23 @@ const Dashboard = () => {
                 <div>
                   <div className="text-white font-semibold text-sm mb-0.5">Missioner</div>
                   <div className="text-white/80 text-xs">{activeMissions} aktive</div>
+                </div>
+              </div>
+            </Card>
+
+            <Card 
+              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95 flex-shrink-0"
+              style={{ background: "var(--gradient-green)" }}
+              onClick={() => navigate("/mnemonics")}
+            >
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <Lightbulb className="w-8 h-8 text-white" />
+                  <Brain className="w-4 h-4 text-white/70" />
+                </div>
+                <div>
+                  <div className="text-white font-semibold text-sm mb-0.5">Husketeknik</div>
+                  <div className="text-white/80 text-xs">Mine regler</div>
                 </div>
               </div>
             </Card>
