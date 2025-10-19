@@ -90,7 +90,7 @@ Funktioner du kan tilbyde:
   * YouTube-link (fuld URL: https://www.youtube.com/watch?v=VIDEO_ID)
   * En kort beskrivelse (1-2 sætninger) af hvorfor videoen matcher
 
-Format YouTube anbefalinger sådan:
+Format YouTube anbefalinger sådan - LAV SØGNINGEN PÅ ENGELSK:
 [YOUTUBE_VIDEO]
 Titel: [Video titel]
 Kanal: [Kanal navn]
