@@ -76,6 +76,15 @@ Format:
     // Parse the JSON response from AI
     const evaluation = JSON.parse(content);
 
+    // Ensure feedback is always a string
+    if (typeof evaluation.feedback === 'object') {
+      const parts = [];
+      if (evaluation.feedback.godt) parts.push(`✅ ${evaluation.feedback.godt}`);
+      if (evaluation.feedback.mangler) parts.push(`⚠️ ${evaluation.feedback.mangler}`);
+      if (evaluation.feedback.forbedringer) parts.push(`💡 ${evaluation.feedback.forbedringer}`);
+      evaluation.feedback = parts.join('\n\n');
+    }
+
     return new Response(
       JSON.stringify(evaluation),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

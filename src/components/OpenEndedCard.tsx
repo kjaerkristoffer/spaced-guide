@@ -108,8 +108,10 @@ const OpenEndedCard = ({ question, topic, onRate }: OpenEndedCardProps) => {
                       Score: {evaluation.score}/10
                     </p>
                   </div>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                    {evaluation.feedback}
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap break-words">
+                    {typeof evaluation.feedback === 'string' 
+                      ? evaluation.feedback 
+                      : JSON.stringify(evaluation.feedback)}
                   </p>
                 </div>
                 <Button 
