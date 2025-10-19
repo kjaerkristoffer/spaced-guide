@@ -204,36 +204,43 @@ const LearningPath = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="container mx-auto px-4 py-4">
-          <Button variant="ghost" onClick={() => navigate("/dashboard")}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Tilbage til Dashboard
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-3 sm:py-4">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => navigate("/dashboard")}
+            className="gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Tilbage til Dashboard</span>
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 rounded-xl" style={{ background: "var(--gradient-primary)" }}>
-              <Brain className="w-6 h-6 text-white" />
+      <main className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+            <div className="flex items-center gap-3 flex-1">
+              <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl" style={{ background: "var(--gradient-primary)" }}>
+                <Brain className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold truncate">{path?.subject}</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  {path?.structure?.topics?.length || 0} emner
+                </p>
+              </div>
             </div>
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold">{path?.subject}</h1>
-              <p className="text-muted-foreground">
-                {path?.structure?.topics?.length || 0} emner
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="flex items-center gap-2 mb-1">
-                <Award className="w-5 h-5 text-primary" />
-                <span className="text-2xl font-bold">
+            <div className="flex items-center gap-2 sm:text-right">
+              <Award className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+              <div>
+                <span className="text-lg sm:text-2xl font-bold">
                   {completedTopics.size}/{path?.structure?.topics?.length || 0}
                 </span>
+                <p className="text-xs sm:text-sm text-muted-foreground">Fuldført</p>
               </div>
-              <p className="text-sm text-muted-foreground">Fuldført</p>
             </div>
           </div>
           <Progress 
@@ -251,61 +258,64 @@ const LearningPath = () => {
             return (
               <Card 
                 key={index}
-                className={`shadow-[var(--shadow-card)] transition-all hover:shadow-[var(--shadow-elevated)] ${
-                  isCompleted ? 'border-green-500 border-2' : ''
+                className={`p-4 sm:p-6 rounded-2xl border-0 bg-gradient-to-br from-background to-muted/20 shadow-[var(--shadow-card)] transition-all hover:shadow-[var(--shadow-elevated)] ${
+                  isCompleted ? 'ring-2 ring-success' : ''
                 }`}
               >
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="flex items-center gap-2">
-                        <span className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
-                          isCompleted ? 'bg-green-500 text-white' : 'bg-primary/10 text-primary'
-                        }`}>
-                          {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : topic.order}
-                        </span>
-                        {topic.title}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full flex-shrink-0 ${
+                      isCompleted ? 'bg-success text-white' : 'bg-primary/10 text-primary'
+                    }`}>
+                      {isCompleted ? <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" /> : (
+                        <span className="text-sm sm:text-base font-bold">{topic.order}</span>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-semibold mb-1 flex items-center gap-2 flex-wrap">
+                        <span className="break-words">{topic.title}</span>
                         {isCompleted && (
-                          <span className="text-sm font-normal text-green-600">✓ Fuldført</span>
+                          <span className="text-xs font-normal text-success whitespace-nowrap">✓ Fuldført</span>
                         )}
-                      </CardTitle>
-                      <CardDescription className="mt-2">
+                      </h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-2 line-clamp-2">
                         {topic.description}
-                      </CardDescription>
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        ~{topic.estimatedMinutes} min
+                      </p>
                       {progress > 0 && progress < 100 && (
                         <div className="mt-3">
-                          <Progress value={progress} className="h-1" />
+                          <Progress value={progress} className="h-1.5" />
                           <p className="text-xs text-muted-foreground mt-1">
                             {Math.round(progress)}% fuldført
                           </p>
                         </div>
                       )}
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      ~{topic.estimatedMinutes} min
-                    </div>
                   </div>
-                </CardHeader>
-                <CardContent>
                   <Button
                     onClick={() => startTopic(topic)}
                     disabled={generatingCards === topic.title}
-                    className="w-full sm:w-auto"
+                    className="w-full sm:w-auto whitespace-nowrap"
                     variant={isInProgress ? "secondary" : "default"}
+                    size="lg"
                   >
                     {generatingCards === topic.title ? (
                       <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Genererer Indhold...
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin flex-shrink-0" />
+                        <span className="truncate">Genererer...</span>
                       </>
                     ) : (
                       <>
-                        <Play className="w-4 h-4 mr-2" />
-                        {isCompleted ? 'Gennemgå Emne' : isInProgress ? 'Fortsæt Læring' : 'Start Læring'}
+                        <Play className="w-4 h-4 mr-2 flex-shrink-0" />
+                        <span className="truncate">
+                          {isCompleted ? 'Gennemgå' : isInProgress ? 'Fortsæt' : 'Start'}
+                        </span>
                       </>
                     )}
                   </Button>
-                </CardContent>
+                </div>
               </Card>
             );
           })}

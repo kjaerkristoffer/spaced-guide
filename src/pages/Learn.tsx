@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import FlashCard from "@/components/FlashCard";
 import QuizCard from "@/components/QuizCard";
 import FillBlankCard from "@/components/FillBlankCard";
+import OpenEndedCard from "@/components/OpenEndedCard";
 import { trackCardCompletion } from "@/utils/progressTracker";
 
 interface Card {
@@ -109,9 +110,13 @@ const Learn = () => {
   const handleRate = async (rating: number) => {
     const card = cards[currentIndex];
     const isLastCard = currentIndex >= cards.length - 1;
+    const isOpenEndedCard = currentIndex === cards.length;
     
     // Immediately move to next card or complete
-    if (!isLastCard) {
+    if (!isLastCard && !isOpenEndedCard) {
+      setCurrentIndex(currentIndex + 1);
+    } else if (isLastCard && !isOpenEndedCard) {
+      // Move to open-ended question after last card
       setCurrentIndex(currentIndex + 1);
     } else {
       toast.success("Emne fuldført!");
@@ -242,8 +247,10 @@ const Learn = () => {
     );
   }
 
-  const currentCard = cards[currentIndex];
-  const progress = ((currentIndex + 1) / cards.length) * 100;
+  const currentCard = currentIndex < cards.length ? cards[currentIndex] : null;
+  const isOpenEndedQuestion = currentIndex === cards.length;
+  const totalSteps = cards.length + 1; // cards + open-ended question
+  const progress = ((currentIndex + 1) / totalSteps) * 100;
 
   return (
     <div className="min-h-screen bg-background">
@@ -255,7 +262,7 @@ const Learn = () => {
               Afslut
             </Button>
             <div className="text-sm font-medium">
-              {currentIndex + 1} / {cards.length}
+              {currentIndex + 1} / {totalSteps}
             </div>
           </div>
         </div>
@@ -273,30 +280,38 @@ const Learn = () => {
         </div>
 
         <div className="py-8">
-          {currentCard.card_type === "flashcard" ? (
-            <FlashCard
-              key={currentCard.id}
-              question={currentCard.question}
-              answer={currentCard.answer}
+          {isOpenEndedQuestion ? (
+            <OpenEndedCard
+              question={`Forklar hvad du har lært om "${topic}". Hvad er de vigtigste punkter?`}
+              topic={topic || ""}
               onRate={handleRate}
             />
-          ) : currentCard.card_type === "quiz" ? (
-            <QuizCard
-              key={currentCard.id}
-              question={currentCard.question}
-              answer={currentCard.answer}
-              options={currentCard.options || []}
-              onRate={handleRate}
-            />
-          ) : (
-            <FillBlankCard
-              key={currentCard.id}
-              question={currentCard.question}
-              answer={currentCard.answer}
-              options={currentCard.options || []}
-              onRate={handleRate}
-            />
-          )}
+          ) : currentCard ? (
+            currentCard.card_type === "flashcard" ? (
+              <FlashCard
+                key={currentCard.id}
+                question={currentCard.question}
+                answer={currentCard.answer}
+                onRate={handleRate}
+              />
+            ) : currentCard.card_type === "quiz" ? (
+              <QuizCard
+                key={currentCard.id}
+                question={currentCard.question}
+                answer={currentCard.answer}
+                options={currentCard.options || []}
+                onRate={handleRate}
+              />
+            ) : (
+              <FillBlankCard
+                key={currentCard.id}
+                question={currentCard.question}
+                answer={currentCard.answer}
+                options={currentCard.options || []}
+                onRate={handleRate}
+              />
+            )
+          ) : null}
         </div>
       </div>
     </div>

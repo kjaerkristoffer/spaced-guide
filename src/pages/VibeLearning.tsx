@@ -164,16 +164,16 @@ const VibeLearning = () => {
                   Stil spørgsmål, udforsk emner, få videoer og generer øvelseskort - alt sammen tilpasset din læring
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-3 max-w-2xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
                 {quickPrompts.map((prompt, idx) => (
                   <Button
                     key={idx}
                     variant="outline"
-                    className="h-auto py-4 justify-start gap-3"
+                    className="h-auto py-3 sm:py-4 justify-start gap-3 text-left whitespace-normal"
                     onClick={() => setInput(prompt.text)}
                   >
-                    <prompt.icon className={`h-5 w-5 ${prompt.color}`} />
-                    <span className="text-sm">{prompt.text}</span>
+                    <prompt.icon className={`h-5 w-5 flex-shrink-0 ${prompt.color}`} />
+                    <span className="text-xs sm:text-sm break-words">{prompt.text}</span>
                   </Button>
                 ))}
               </div>

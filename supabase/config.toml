@@ -2,3 +2,6 @@ project_id = "qsmyvwddklmazzpwoktg"
 
 [functions.vibe-learning]
 verify_jwt = true
+
+[functions.evaluate-answer]
+verify_jwt = true
