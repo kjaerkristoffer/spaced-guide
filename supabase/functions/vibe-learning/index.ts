@@ -43,6 +43,9 @@ serve(async (req) => {
 
     console.log("Processing Vibe Learning request for user:", user.id);
 
+    // Get YouTube API key
+    const YOUTUBE_API_KEY = Deno.env.get("YOUTUBE_API_KEY");
+
     // Get learning path context if specified
     let contextInfo = "";
     if (learningPathId) {
@@ -69,37 +72,22 @@ serve(async (req) => {
     const messages = [
       {
         role: "system",
-        content: `You are an intelligent learning mentor with 50 years of experience in pedagogy and didactics, and with real-time internet search access.  
+        content: `You are an intelligent learning mentor with 50 years of experience in pedagogy and didactics.  
 Your task is to help the student learn in an engaging and personalized way.
 
 Functions you can offer:
 1. **Explain concepts** in different ways (analogies, examples, simplifications)  
-2. **YouTube video recommendations** – find EXISTING YouTube videos via internet search  
+2. **YouTube video recommendations** – request real YouTube videos  
 3. **Generate practice cards** – create quizzes, flashcards, or fill-in-the-blank exercises on the topic  
 4. **Explore related topics** – help the student see connections  
-5. **Personalized feedback** – adapt responses to the student’s level and learning style  
+5. **Personalized feedback** – adapt responses to the student's level and learning style  
 
-🎥 **YOUTUBE VIDEO SEARCH – RULES:**  
-- You MUST use real search results from the internet (never invent video titles, channel names, or links).  
-- Please confirm all links before sharing them.  
-- You MUST include the full YouTube URL for each video.  
-- Only show videos that actually exist on YouTube. Keep verifying the video links until you are sure the link points to an existing YouTube video. Make sure the link never leads to “This video is not available” on YouTube.  
-- Always provide between 3 and 5 relevant results.  
-- For each video, include:  
-  * Video title  
-  * Channel name  
-  * YouTube link (full URL: https://www.youtube.com/watch?v=VIDEO_ID)  
-  * A short description (1–2 sentences) of why the video matches.  
-
-Format YouTube recommendations like this – **perform the search in English**:  
-[YOUTUBE_VIDEO]  
-Title: [Video title]  
-Channel: [Channel name]  
-URL: [Full YouTube URL]  
-Description: [Why this video is relevant]  
-[/YOUTUBE_VIDEO]
-
-AND REMEMBER: **NEVER PROVIDE LINKS TO NON-EXISTING YOUTUBE VIDEOS. THIS IS STRICTLY FORBIDDEN!!!**  
+🎥 **YOUTUBE VIDEO RECOMMENDATIONS – RULES:**  
+- When the user asks for videos or when it would be helpful, use the format: [REQUEST_YOUTUBE: search query in English]
+- The search query should be clear and specific to get the best results
+- Example: [REQUEST_YOUTUBE: introduction to photosynthesis biology]
+- The system will automatically fetch real YouTube videos matching your search query
+- You will NOT see the videos in your response, but they will be added automatically for the user
 
 When suggesting practice cards, format them like this:  
 [PRACTICE: Description of the exercise]
@@ -166,18 +154,40 @@ ${contextInfo}`,
     // Parse resources from response
     const resources: any[] = [];
 
-    // Extract YouTube video recommendations
-    const videoPattern =
-      /\[YOUTUBE_VIDEO\]\s*Titel:\s*([^\n]+)\s*Kanal:\s*([^\n]+)\s*URL:\s*(https:\/\/www\.youtube\.com\/watch\?v=[^\s]+)\s*Beskrivelse:\s*([^\[]+)\[\/YOUTUBE_VIDEO\]/g;
-    const videoMatches = aiResponse.matchAll(videoPattern);
-    for (const match of videoMatches) {
-      resources.push({
-        type: "youtube",
-        title: match[1].trim(),
-        channel: match[2].trim(),
-        url: match[3].trim(),
-        description: match[4].trim(),
-      });
+    // Check if AI response requests YouTube videos
+    const youtubeRequestMatch = aiResponse.match(/\[REQUEST_YOUTUBE:\s*([^\]]+)\]/);
+    
+    if (youtubeRequestMatch && YOUTUBE_API_KEY) {
+      const searchQuery = youtubeRequestMatch[1].trim();
+      console.log("Fetching YouTube videos for query:", searchQuery);
+      
+      try {
+        // Call YouTube Data API v3
+        const youtubeResponse = await fetch(
+          `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(searchQuery)}&key=${YOUTUBE_API_KEY}&relevanceLanguage=da`
+        );
+
+        if (youtubeResponse.ok) {
+          const youtubeData = await youtubeResponse.json();
+          
+          if (youtubeData.items && youtubeData.items.length > 0) {
+            for (const item of youtubeData.items) {
+              resources.push({
+                type: "youtube",
+                title: item.snippet.title,
+                channel: item.snippet.channelTitle,
+                url: `https://www.youtube.com/watch?v=${item.id.videoId}`,
+                description: item.snippet.description.substring(0, 150) + "...",
+              });
+            }
+            console.log(`Found ${youtubeData.items.length} YouTube videos`);
+          }
+        } else {
+          console.error("YouTube API error:", await youtubeResponse.text());
+        }
+      } catch (error) {
+        console.error("Error fetching YouTube videos:", error);
+      }
     }
 
     // Extract practice exercises
@@ -200,7 +210,7 @@ ${contextInfo}`,
 
     // Clean response text from markup
     let cleanResponse = aiResponse
-      .replace(/\[YOUTUBE_VIDEO\][\s\S]*?\[\/YOUTUBE_VIDEO\]/g, "")
+      .replace(/\[REQUEST_YOUTUBE:[^\]]+\]/g, "")
       .replace(/\[PRACTICE: [^\]]+\]/g, "")
       .replace(/\[CONCEPT: [^\]]+\]/g, "")
       .trim();
