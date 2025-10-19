@@ -366,7 +366,7 @@ const Dashboard = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center text-white font-bold text-lg">
-              <User className="w-5 h-5" />
+              {userStats?.level || "1"}
             </div>
             <div>
               <h2 className="font-semibold text-sm">LearnSmart</h2>
