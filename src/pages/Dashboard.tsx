@@ -3,12 +3,35 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2, CheckCircle2, Trash2, Trophy, Star, Flame, Target, Sparkles, Lightbulb, GripVertical } from "lucide-react";
+import {
+  Brain,
+  BookOpen,
+  RotateCcw,
+  Plus,
+  LogOut,
+  Loader2,
+  CheckCircle2,
+  Trash2,
+  Trophy,
+  Star,
+  Flame,
+  Target,
+  Sparkles,
+  Lightbulb,
+  GripVertical,
+} from "lucide-react";
 import { toast } from "sonner";
 import { getColorFromString, getIconForTopic } from "@/utils/colorUtils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import {
   AlertDialog,
@@ -28,15 +51,15 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { SortableLearningPath } from "@/components/SortableLearningPath";
 
 interface LearningPath {
@@ -72,7 +95,9 @@ const Dashboard = () => {
   }, []);
 
   const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (!session) {
       navigate("/auth");
     }
@@ -105,20 +130,17 @@ const Dashboard = () => {
       setTotalCardsCount(totalCount || 0);
 
       // Get all cards with next_review dates and filter client-side
-      const { data, error } = await supabase
-        .from("user_progress")
-        .select("next_review")
-        .not("next_review", "is", null);
+      const { data, error } = await supabase.from("user_progress").select("next_review").not("next_review", "is", null);
 
       if (error) throw error;
-      
+
       // Filter cards that are due on the client side to handle timezone properly
       const now = new Date();
       const dueCards = (data || []).filter((card: any) => {
         const nextReviewDate = new Date(card.next_review);
         return nextReviewDate <= now;
       });
-      
+
       setDueCardsCount(dueCards.length);
     } catch (error: any) {
       console.error("Failed to fetch review stats:", error);
@@ -127,7 +149,9 @@ const Dashboard = () => {
 
   const fetchPathProgress = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
 
       // Get all learning paths to know total topics
@@ -154,12 +178,12 @@ const Dashboard = () => {
 
       if (progressError) throw progressError;
 
-      const reviewedCardIds = new Set(progress?.map(p => p.card_id) || []);
-      
+      const reviewedCardIds = new Set(progress?.map((p) => p.card_id) || []);
+
       // Group cards by path and topic
       const pathTopicStats: Record<string, Record<string, { total: number; reviewed: number }>> = {};
 
-      allCards?.forEach(card => {
+      allCards?.forEach((card) => {
         if (!pathTopicStats[card.learning_path_id]) {
           pathTopicStats[card.learning_path_id] = {};
         }
@@ -174,25 +198,23 @@ const Dashboard = () => {
 
       // Calculate progress - EXACTLY like LearningPath.tsx
       const progressPct: Record<string, number> = {};
-      paths?.forEach(path => {
+      paths?.forEach((path) => {
         const structure = path.structure as any;
         const totalTopicsInStructure = structure?.topics?.length || 0;
         const topicStats = pathTopicStats[path.id] || {};
-        
+
         let completedTopics = 0;
-        
+
         // Count how many topics are 100% complete (exactly like LearningPath line 104-109)
-        Object.values(topicStats).forEach(stats => {
+        Object.values(topicStats).forEach((stats) => {
           const pct = stats.total > 0 ? (stats.reviewed / stats.total) * 100 : 0;
           if (pct === 100) {
             completedTopics++;
           }
         });
-        
+
         // Progress is: completed topics / ALL topics in structure (exactly like LearningPath line 240)
-        progressPct[path.id] = totalTopicsInStructure > 0 
-          ? (completedTopics / totalTopicsInStructure) * 100 
-          : 0;
+        progressPct[path.id] = totalTopicsInStructure > 0 ? (completedTopics / totalTopicsInStructure) * 100 : 0;
       });
 
       setPathProgress(progressPct);
@@ -203,22 +225,16 @@ const Dashboard = () => {
 
   const fetchMissionStats = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
 
       // Fetch or create user stats
-      let { data: stats } = await supabase
-        .from("user_stats")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      let { data: stats } = await supabase.from("user_stats").select("*").eq("user_id", user.id).maybeSingle();
 
       if (!stats) {
-        const { data: newStats } = await supabase
-          .from("user_stats")
-          .insert({ user_id: user.id })
-          .select()
-          .single();
+        const { data: newStats } = await supabase.from("user_stats").insert({ user_id: user.id }).select().single();
         stats = newStats;
       }
 
@@ -247,13 +263,12 @@ const Dashboard = () => {
 
   const fetchMnemonics = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
-        .from("mnemonics")
-        .select("id")
-        .eq("user_id", user.id);
+      const { data, error } = await supabase.from("mnemonics").select("id").eq("user_id", user.id);
 
       if (error) throw error;
       setMnemonics(data || []);
@@ -276,15 +291,16 @@ const Dashboard = () => {
     setCreating(true);
     try {
       // Generate learning path using AI
-      const { data: functionData, error: functionError } = await supabase.functions.invoke(
-        "generate-learning-path",
-        { body: { subject: newSubject } }
-      );
+      const { data: functionData, error: functionError } = await supabase.functions.invoke("generate-learning-path", {
+        body: { subject: newSubject },
+      });
 
       if (functionError) throw functionError;
 
       // Save to database
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const { data, error } = await supabase
         .from("learning_paths")
         .insert({
@@ -311,10 +327,7 @@ const Dashboard = () => {
 
   const deleteLearningPath = async (pathId: string) => {
     try {
-      const { error } = await supabase
-        .from("learning_paths")
-        .delete()
-        .eq("id", pathId);
+      const { error } = await supabase.from("learning_paths").delete().eq("id", pathId);
 
       if (error) throw error;
 
@@ -332,16 +345,16 @@ const Dashboard = () => {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = learningPaths.findIndex(path => path.id === active.id);
-      const newIndex = learningPaths.findIndex(path => path.id === over.id);
-      
+      const oldIndex = learningPaths.findIndex((path) => path.id === active.id);
+      const newIndex = learningPaths.findIndex((path) => path.id === over.id);
+
       setLearningPaths(arrayMove(learningPaths, oldIndex, newIndex));
     }
   };
@@ -360,7 +373,12 @@ const Dashboard = () => {
               <p className="text-xs opacity-70">Student</p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-background hover:bg-background/10">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleSignOut}
+            className="text-background hover:bg-background/10"
+          >
             <LogOut className="w-5 h-5" />
           </Button>
         </div>
@@ -369,7 +387,7 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 py-6 max-w-6xl">
         {/* Stats Grid - Mobile First */}
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <Card 
+          <Card
             className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 bg-gradient-to-br from-blue-500/10 to-indigo-500/10"
             onClick={() => navigate("/spaced-repetition")}
           >
@@ -382,7 +400,7 @@ const Dashboard = () => {
             </div>
           </Card>
 
-          <Card 
+          <Card
             className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95"
             onClick={() => navigate("/missions")}
           >
@@ -395,7 +413,7 @@ const Dashboard = () => {
             </div>
           </Card>
 
-          <Card 
+          <Card
             className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 bg-gradient-to-br from-green-500/10 to-emerald-500/10"
             onClick={() => navigate("/mnemonics")}
           >
@@ -408,7 +426,7 @@ const Dashboard = () => {
             </div>
           </Card>
 
-          <Card 
+          <Card
             className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 bg-gradient-to-br from-pink-500/10 to-purple-500/10"
             onClick={() => navigate("/vibe-learning")}
           >
@@ -423,11 +441,10 @@ const Dashboard = () => {
         <div className="mb-8 overflow-visible">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold">Emner</h2>
-            <button className="text-primary text-sm font-medium">Se alle</button>
           </div>
 
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 hide-scrollbar">
-            <Card 
+            <Card
               className="min-w-[160px] p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 flex-shrink-0"
               style={{ background: "var(--gradient-orange)" }}
               onClick={() => navigate("/spaced-repetition")}
@@ -444,7 +461,7 @@ const Dashboard = () => {
               </div>
             </Card>
 
-            <Card 
+            <Card
               className="min-w-[160px] p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 flex-shrink-0"
               style={{ background: "var(--gradient-blue)" }}
               onClick={() => navigate("/vibe-learning")}
@@ -461,7 +478,7 @@ const Dashboard = () => {
               </div>
             </Card>
 
-            <Card 
+            <Card
               className="min-w-[160px] p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 flex-shrink-0"
               style={{ background: "var(--gradient-primary)" }}
               onClick={() => navigate("/missions")}
@@ -478,7 +495,7 @@ const Dashboard = () => {
               </div>
             </Card>
 
-            <Card 
+            <Card
               className="min-w-[160px] p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 flex-shrink-0"
               style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 100%)" }}
               onClick={() => navigate("/mnemonics")}
@@ -502,7 +519,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold">Læringsstier</h2>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <Button 
+              <Button
                 onClick={() => navigate("/create")}
                 size="sm"
                 className="gap-2"
@@ -512,40 +529,36 @@ const Dashboard = () => {
                 Ny
               </Button>
               <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Opret Ny Læringssti</DialogTitle>
-                <DialogDescription>
-                  Indtast et emne du vil lære, og AI vil skabe en struktureret læringssti til dig.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Emne</Label>
-                  <Input
-                    id="subject"
-                    placeholder="f.eks. Python Programmering, Spansk Grammatik, Kvantfysik..."
-                    value={newSubject}
-                    onChange={(e) => setNewSubject(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && createLearningPath()}
-                  />
+                <DialogHeader>
+                  <DialogTitle>Opret Ny Læringssti</DialogTitle>
+                  <DialogDescription>
+                    Indtast et emne du vil lære, og AI vil skabe en struktureret læringssti til dig.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">Emne</Label>
+                    <Input
+                      id="subject"
+                      placeholder="f.eks. Python Programmering, Spansk Grammatik, Kvantfysik..."
+                      value={newSubject}
+                      onChange={(e) => setNewSubject(e.target.value)}
+                      onKeyPress={(e) => e.key === "Enter" && createLearningPath()}
+                    />
+                  </div>
+                  <Button className="w-full" onClick={createLearningPath} disabled={creating}>
+                    {creating ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Genererer...
+                      </>
+                    ) : (
+                      "Opret Læringssti"
+                    )}
+                  </Button>
                 </div>
-                <Button 
-                  className="w-full" 
-                  onClick={createLearningPath}
-                  disabled={creating}
-                >
-                  {creating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Genererer...
-                    </>
-                  ) : (
-                    "Opret Læringssti"
-                  )}
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <div className="space-y-3">
@@ -557,23 +570,14 @@ const Dashboard = () => {
               <Card className="p-12 text-center rounded-2xl border-0 shadow-lg">
                 <Brain className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
                 <h3 className="text-xl font-semibold mb-2">Ingen læringsstier endnu</h3>
-                <p className="text-muted-foreground mb-4">
-                  Opret din første læringssti for at komme i gang!
-                </p>
+                <p className="text-muted-foreground mb-4">Opret din første læringssti for at komme i gang!</p>
               </Card>
             ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={learningPaths.map(p => p.id)}
-                  strategy={verticalListSortingStrategy}
-                >
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={learningPaths.map((p) => p.id)} strategy={verticalListSortingStrategy}>
                   {learningPaths.map((path) => {
                     const progress = pathProgress[path.id] || 0;
-                    
+
                     return (
                       <SortableLearningPath
                         key={path.id}
@@ -596,8 +600,8 @@ const Dashboard = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
             <AlertDialogDescription>
-              Dette vil permanent slette læringsstien og alle tilhørende kort og fremskridt. 
-              Denne handling kan ikke fortrydes.
+              Dette vil permanent slette læringsstien og alle tilhørende kort og fremskridt. Denne handling kan ikke
+              fortrydes.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
