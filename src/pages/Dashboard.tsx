@@ -292,223 +292,150 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 rounded-xl" style={{ background: "var(--gradient-primary)" }}>
-              <Brain className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+      {/* Dark Header inspired by reference */}
+      <header className="bg-foreground text-background border-b border-border/10">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center text-white font-bold text-lg">
+              {userStats?.level || "1"}
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold">LearnSmart</h1>
+            <div>
+              <h2 className="font-semibold text-sm">LearnSmart</h2>
+              <p className="text-xs opacity-70">Student</p>
+            </div>
           </div>
-          <Button variant="outline" size="sm" onClick={handleSignOut} className="text-xs sm:text-sm">
-            <LogOut className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
-            <span className="hidden sm:inline">Log Ud</span>
+          <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-background hover:bg-background/10">
+            <LogOut className="w-5 h-5" />
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12">
-        <div className="mb-6 sm:mb-8 md:mb-12 grid gap-4 sm:gap-6 md:grid-cols-2 max-w-5xl mx-auto">
-          {/* Learning Area Card */}
+      <main className="container mx-auto px-4 py-6 max-w-6xl">
+        {/* Stats Grid - Mobile First */}
+        <div className="grid grid-cols-2 gap-3 mb-6">
           <Card 
-            className="group relative overflow-hidden border-2 border-green-500/30 bg-gradient-to-br from-green-500/5 to-emerald-500/10"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-green-400/10 to-emerald-600/10" />
-            <CardHeader className="relative pb-3 sm:pb-4">
-              <div className="mb-3 sm:mb-4 p-2 sm:p-3 w-fit rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/20">
-                <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-              </div>
-              <CardTitle className="text-2xl sm:text-3xl mb-1 sm:mb-2 flex items-center gap-2">
-                <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                  Læringsområde
-                </span>
-              </CardTitle>
-              <CardDescription className="text-sm sm:text-base">
-                Udforsk nye emner og opbyg din viden med AI-genererede læringsstier
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="relative pt-4 sm:pt-6">
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 mb-3 sm:mb-4 border border-green-500/20">
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  📚 Se dine læringsstier nedenfor og tryk på en for at fortsætte læringen
-                </p>
-              </div>
-              <Button 
-                size="lg"
-                variant="outline"
-                className="w-full text-sm sm:text-base h-10 sm:h-12 border-green-500/50 hover:bg-green-500/10 hover:border-green-500" 
-                onClick={() => document.getElementById('learning-paths')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Se Mine Læringsstier
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Spaced Repetition Card */}
-          <Card 
-            className="group relative overflow-hidden border-2 border-purple-500/30 bg-gradient-to-br from-purple-500/5 to-blue-500/10 cursor-pointer hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] transition-all duration-300"
+            className="p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95"
             onClick={() => navigate("/spaced-repetition")}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-blue-600/10" />
-            <CardHeader className="relative pb-3 sm:pb-4">
-              <div className="mb-3 sm:mb-4 p-2 sm:p-3 w-fit rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 shadow-lg shadow-purple-500/20">
-                <Brain className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+            <div className="flex flex-col gap-2">
+              <div className="text-2xl font-bold">{dueCardsCount}</div>
+              <div className="text-xs text-muted-foreground">Gennemgang</div>
+            </div>
+          </Card>
+
+          <Card 
+            className="p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95"
+            onClick={() => navigate("/missions")}
+          >
+            <div className="flex flex-col gap-2">
+              <div className="text-2xl font-bold flex items-center gap-1">
+                <Flame className="w-5 h-5 text-orange-500" />
+                {userStats?.current_streak || 0}
               </div>
-              <CardTitle className="text-2xl sm:text-3xl mb-1 sm:mb-2 flex items-center gap-2">
-                <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  Spaced Repetition
-                </span>
-              </CardTitle>
-              <CardDescription className="text-sm sm:text-base">
-                Optimer din hukommelse med videnskabeligt bevist gentagelsesmetode
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="relative pt-4 sm:pt-6">
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 mb-3 sm:mb-4 border border-purple-500/20">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs sm:text-sm text-muted-foreground">Forfalder i dag:</span>
-                  <span className="text-base sm:text-lg font-bold text-purple-500">{dueCardsCount}</span>
-                </div>
-                <Progress value={(dueCardsCount / Math.max(dueCardsCount, 1)) * 100} className="h-2" />
+              <div className="text-xs text-muted-foreground">Dages streak</div>
+            </div>
+          </Card>
+
+          <Card 
+            className="p-4 rounded-2xl border-0 shadow-[var(--shadow-card)]"
+          >
+            <div className="flex flex-col gap-2">
+              <div className="text-2xl font-bold flex items-center gap-1">
+                <Star className="w-5 h-5 text-yellow-500" />
+                {userStats?.total_points || 0}
               </div>
-              <Button 
-                size="lg"
-                className="w-full text-base sm:text-lg h-11 sm:h-14 bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 group-hover:scale-105 transition-transform shadow-lg shadow-purple-500/20" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate("/spaced-repetition");
-                }}
-              >
-                <Brain className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Start Gennemgang
-              </Button>
-            </CardContent>
+              <div className="text-xs text-muted-foreground">Points</div>
+            </div>
+          </Card>
+
+          <Card 
+            className="p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95 bg-gradient-to-br from-pink-500/10 to-purple-500/10"
+            onClick={() => navigate("/vibe-learning")}
+          >
+            <div className="flex flex-col gap-2">
+              <Sparkles className="w-6 h-6 text-pink-500" />
+              <div className="text-xs text-muted-foreground font-medium">Vibe AI</div>
+            </div>
           </Card>
         </div>
 
-        {/* Vibe Learning Card */}
-        <Card 
-          className="mb-4 sm:mb-6 max-w-5xl mx-auto bg-gradient-to-br from-pink-500/10 via-purple-500/10 to-blue-500/10 border-2 border-pink-500/30 hover:border-pink-500/50 transition-all duration-300 cursor-pointer hover:shadow-[0_0_30px_rgba(236,72,153,0.2)]"
-          onClick={() => navigate("/vibe-learning")}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-pink-400/10 to-purple-600/10" />
-          <CardHeader className="relative pb-3 sm:pb-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2 sm:gap-3 flex-1">
-                <div className="p-2 sm:p-3 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 shadow-lg shadow-pink-500/20">
-                  <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <CardTitle className="text-xl sm:text-2xl bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                    Vibe Learning ✨
-                  </CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">
-                    Chat med AI, få videoer, generer øvelser - personlig læring i dit tempo
-                  </CardDescription>
-                </div>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="border-pink-500/50 hover:bg-pink-500/10 w-full sm:w-auto"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate("/vibe-learning");
-                }}
-              >
-                Start Chat
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="relative">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-2 sm:p-3 border border-pink-500/20">
-                <p className="text-[10px] sm:text-xs text-muted-foreground">💬 Konversationel læring</p>
-              </div>
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-2 sm:p-3 border border-purple-500/20">
-                <p className="text-[10px] sm:text-xs text-muted-foreground">🎥 Video anbefalinger</p>
-              </div>
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-2 sm:p-3 border border-blue-500/20">
-                <p className="text-[10px] sm:text-xs text-muted-foreground">⚡ Instant øvelser</p>
-              </div>
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-2 sm:p-3 border border-pink-500/20">
-                <p className="text-[10px] sm:text-xs text-muted-foreground">🎯 Kontekst-bevidst</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Featured Courses Section */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold">Emner</h2>
+            <button className="text-primary text-sm font-medium">Se alle</button>
+          </div>
 
-        {/* Missions & Achievements Overview */}
-        <Card 
-          className="mb-6 sm:mb-8 md:mb-12 max-w-5xl mx-auto bg-gradient-to-br from-purple-500/10 via-yellow-500/10 to-orange-500/10 border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 cursor-pointer hover:shadow-[var(--shadow-elevated)]"
-          onClick={() => navigate("/missions")}
-        >
-          <CardHeader className="pb-3 sm:pb-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2 sm:gap-3 flex-1">
-                <div className="p-2 sm:p-3 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500">
-                  <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 hide-scrollbar">
+            <Card 
+              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95 flex-shrink-0"
+              style={{ background: "var(--gradient-orange)" }}
+              onClick={() => navigate("/spaced-repetition")}
+            >
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <Brain className="w-8 h-8 text-white" />
+                  <Target className="w-4 h-4 text-white/70" />
                 </div>
-                <div className="flex-1">
-                  <CardTitle className="text-xl sm:text-2xl">Missioner & Achievements</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">Følg din fremgang og lås op for belønninger</CardDescription>
+                <div>
+                  <div className="text-white font-semibold text-sm mb-0.5">Gennemgang</div>
+                  <div className="text-white/80 text-xs">{dueCardsCount} kort</div>
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={(e) => {
-                e.stopPropagation();
-                navigate("/missions");
-              }}>
-                Se Alle
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-border/50">
-                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                  <Star className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 fill-current" />
-                  <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">Total Points</span>
-                </div>
-                <p className="text-lg sm:text-xl md:text-2xl font-bold text-yellow-500">{userStats?.total_points || 0}</p>
-              </div>
-              
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-border/50">
-                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                  <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
-                  <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">Streak</span>
-                </div>
-                <p className="text-lg sm:text-xl md:text-2xl font-bold text-orange-500">{userStats?.current_streak || 0} <span className="text-xs sm:text-sm">dage</span></p>
-              </div>
-              
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-border/50">
-                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                  <Target className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
-                  <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">Aktive Missioner</span>
-                </div>
-                <p className="text-lg sm:text-xl md:text-2xl font-bold text-blue-500">{activeMissions}</p>
-              </div>
-              
-              <div className="bg-background/50 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-border/50">
-                <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                  <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
-                  <span className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">Achievements</span>
-                </div>
-                <p className="text-lg sm:text-xl md:text-2xl font-bold text-purple-500">{unlockedAchievements}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </Card>
 
-        <div id="learning-paths" className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Dine Læringsstier</h2>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Nyt Emne
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
+            <Card 
+              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95 flex-shrink-0"
+              style={{ background: "var(--gradient-blue)" }}
+              onClick={() => navigate("/vibe-learning")}
+            >
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <Sparkles className="w-8 h-8 text-white" />
+                  <CheckCircle2 className="w-4 h-4 text-white/70" />
+                </div>
+                <div>
+                  <div className="text-white font-semibold text-sm mb-0.5">Vibe AI</div>
+                  <div className="text-white/80 text-xs">Chat & lær</div>
+                </div>
+              </div>
+            </Card>
+
+            <Card 
+              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95 flex-shrink-0"
+              style={{ background: "var(--gradient-primary)" }}
+              onClick={() => navigate("/missions")}
+            >
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <Trophy className="w-8 h-8 text-white" />
+                  <Star className="w-4 h-4 text-white/70" />
+                </div>
+                <div>
+                  <div className="text-white font-semibold text-sm mb-0.5">Missioner</div>
+                  <div className="text-white/80 text-xs">{activeMissions} aktive</div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        {/* Learning Paths Section - Ongoing style */}
+        <div id="learning-paths">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold">Læringsstier</h2>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  size="sm"
+                  className="gap-2"
+                  style={{ background: "var(--gradient-primary)" }}
+                >
+                  <Plus className="w-4 h-4" />
+                  Ny
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
               <DialogHeader>
                 <DialogTitle>Opret Ny Læringssti</DialogTitle>
                 <DialogDescription>
@@ -543,77 +470,73 @@ const Dashboard = () => {
               </div>
             </DialogContent>
           </Dialog>
-        </div>
+          </div>
 
-        {loading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
-        ) : learningPaths.length === 0 ? (
-          <Card className="p-12 text-center">
-            <Brain className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-xl font-semibold mb-2">Ingen læringsstier endnu</h3>
-            <p className="text-muted-foreground mb-4">
-              Opret din første læringssti for at komme i gang!
-            </p>
-          </Card>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {learningPaths.map((path) => {
-              const progress = pathProgress[path.id] || 0;
-              const isComplete = progress === 100;
-              
-              return (
-                <Card 
-                  key={path.id} 
-                  className={`transition-all hover:shadow-[var(--shadow-elevated)] ${
-                    isComplete ? 'border-green-500 border-2' : ''
-                  }`}
-                >
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 cursor-pointer" onClick={() => navigate(`/path/${path.id}`)}>
-                        <CardTitle className="flex items-center gap-2">
-                          {path.subject}
-                          {isComplete && <CheckCircle2 className="w-5 h-5 text-green-500" />}
-                        </CardTitle>
-                        <CardDescription>
-                          {path.structure?.topics?.length || 0} emner
-                        </CardDescription>
+          <div className="space-y-3">
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            ) : learningPaths.length === 0 ? (
+              <Card className="p-12 text-center rounded-2xl border-0 shadow-[var(--shadow-card)]">
+                <Brain className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="text-xl font-semibold mb-2">Ingen læringsstier endnu</h3>
+                <p className="text-muted-foreground mb-4">
+                  Opret din første læringssti for at komme i gang!
+                </p>
+              </Card>
+            ) : (
+              learningPaths.map((path) => {
+                const progress = pathProgress[path.id] || 0;
+                const isComplete = progress === 100;
+                
+                return (
+                  <Card 
+                    key={path.id} 
+                    className="p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-[0.98]"
+                    onClick={() => navigate(`/path/${path.id}`)}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0">
+                        <BookOpen className="w-6 h-6 text-primary" />
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDeletingPathId(path.id);
-                        }}
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="cursor-pointer" onClick={() => navigate(`/path/${path.id}`)}>
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">
-                        Oprettet {new Date(path.created_at).toLocaleDateString('da-DK')}
-                      </p>
-                      {progress > 0 && (
-                        <div>
-                          <Progress value={progress} className="h-1.5" />
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {Math.round(progress)}% fuldført
-                          </p>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <h3 className="font-semibold text-sm truncate">
+                            {path.subject}
+                            {isComplete && <CheckCircle2 className="w-4 h-4 text-green-500 inline ml-1" />}
+                          </h3>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 flex-shrink-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeletingPathId(path.id);
+                            }}
+                          >
+                            <Trash2 className="w-3.5 h-3.5 text-muted-foreground" />
+                          </Button>
                         </div>
-                      )}
+                        <p className="text-xs text-muted-foreground mb-2">
+                          {path.structure?.topics?.length || 0} emner
+                        </p>
+                        {progress > 0 && (
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                              <span>{Math.round(progress)}% fuldført</span>
+                            </div>
+                            <Progress value={progress} className="h-1.5" />
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                  </Card>
+                );
+              })
+            )}
           </div>
-        )}
+        </div>
       </main>
 
       <AlertDialog open={!!deletingPathId} onOpenChange={() => setDeletingPathId(null)}>
