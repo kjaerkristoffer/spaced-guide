@@ -193,16 +193,23 @@ const CreatePath = () => {
 
         {/* Custom Learning Path Section */}
         <div className="max-w-2xl mx-auto">
-          <Card className="border-2 shadow-lg">
-            <CardContent className="p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-                  <BookOpen className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold">Opret Din Egen Læringssti</h2>
-                  <p className="text-sm text-muted-foreground">Tilpasset til dit niveau og dine interesser</p>
-                </div>
+          <Card className="border-2 shadow-2xl overflow-hidden relative">
+            {/* Gradient Background */}
+            <div 
+              className="absolute inset-0 opacity-10"
+              style={{ 
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'
+              }}
+            />
+            
+            <CardContent className="p-8 relative z-10">
+              <div className="mb-6">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">
+                  Opret Din Egen Læringssti
+                </h2>
+                <p className="text-base text-muted-foreground">
+                  Tilpasset til dit niveau og dine interesser
+                </p>
               </div>
 
               <div className="space-y-6">
@@ -216,7 +223,7 @@ const CreatePath = () => {
                     placeholder="F.eks. Python programmering, Fotosyntese, Renæssancen, Spansk grammatik..."
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
-                    className="min-h-[100px] text-base resize-none"
+                    className="min-h-[100px] text-base resize-none border-2 focus:border-primary"
                   />
                   <p className="text-xs text-muted-foreground">
                     Vær så specifik som muligt for bedst tilpasset indhold
@@ -229,7 +236,7 @@ const CreatePath = () => {
                     Dit nuværende niveau <span className="text-destructive">*</span>
                   </Label>
                   <Select value={level} onValueChange={setLevel}>
-                    <SelectTrigger id="level" className="text-base">
+                    <SelectTrigger id="level" className="text-base border-2 focus:border-primary">
                       <SelectValue placeholder="Vælg dit niveau" />
                     </SelectTrigger>
                     <SelectContent>
@@ -249,7 +256,12 @@ const CreatePath = () => {
                 <Button
                   onClick={() => handleCreatePath()}
                   disabled={loading || !subject.trim() || !level}
-                  className="w-full gap-2 h-12 text-base"
+                  className="w-full gap-2 h-14 text-lg font-semibold shadow-lg"
+                  style={{ 
+                    background: loading || !subject.trim() || !level 
+                      ? undefined 
+                      : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                  }}
                   size="lg"
                 >
                   {loading ? (
