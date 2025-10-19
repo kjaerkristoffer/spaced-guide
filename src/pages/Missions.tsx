@@ -220,12 +220,22 @@ const Missions = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
-          <Button variant="ghost" onClick={() => navigate("/dashboard")}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Tilbage til Dashboard
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/dashboard")}
+              className="hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-pink-500/20"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center gap-2">
+              <Trophy className="h-6 w-6 text-primary" />
+              <h1 className="text-2xl font-bold">Missioner</h1>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -290,7 +300,7 @@ const Missions = () => {
           <TabsContent value="missions" className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold mb-4">Aktive Missioner</h2>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                 {activeMissions.map((mission) => {
                   const Icon = getIcon(mission.missions.icon);
                   const progressPercent = (mission.progress / mission.missions.target_count) * 100;
@@ -337,7 +347,7 @@ const Missions = () => {
             {completedMissions.length > 0 && (
               <div>
                 <h2 className="text-2xl font-bold mb-4 text-green-500">Fuldførte Missioner</h2>
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                   {completedMissions.map((mission) => {
                     const Icon = getIcon(mission.missions.icon);
                     

@@ -21,21 +21,21 @@ serve(async (req) => {
 
     console.log('Generating mnemonic for:', text);
 
-    const systemPrompt = `Du er en ekspert i mnemoniske teknikker og hukommelsesstrategier. Din opgave er at skabe effektive huskeregler baseret på videnskabeligt beviste metoder som:
-
-1. **Akronymer og forkortelser**: Brug første bogstav i hvert ord
-2. **Remser og rim**: Skab rytmiske sætninger der er lette at huske
-3. **Stedmetoden (Memory Palace)**: Associer information med steder
-4. **Historiefortælling**: Skab en narrativ der forbinder elementerne
-5. **Visuelle billeder**: Skab levende mentale billeder
-6. **Chunking**: Opdel information i mindre, håndterbare dele
-7. **Associationer**: Forbind ny information med noget velkendt
-
-Giv ALTID en konkret, anvendelig huskeregel på dansk. Hold den kort og præcis (max 2-3 sætninger).`;
+    const systemPrompt = `Du er en ekspert i at skabe effektive husketeknikker og huskeråd. 
+  Din opgave er at generere en kort, præcis og minnesværdig husketeknik på dansk.
+  Hold det simpelt og direkte. Brug billedsprog, metaforer eller sammenligninger når det giver mening.
+  Målet er at gøre information lettere at huske.
+  
+  VIGTIGT: Giv ALDRIG akronymer som huskeregel. Brug i stedet:
+  - Billedsprog og metaforer
+  - Historier eller scenarier
+  - Associationer til hverdagsting
+  - Rim eller rytme
+  - Visuelle beskrivelser`;
 
     const userPrompt = context 
-      ? `Tekst der skal huskes: "${text}"\n\nKontekst: ${context}\n\nGiv en effektiv mnemonisk huskeregel.`
-      : `Tekst der skal huskes: "${text}"\n\nGiv en effektiv mnemonisk huskeregel.`;
+      ? `Tekst at huske: "${text}"\nKontekst: ${context}\n\nGenerer en dansk huskeregel (max 100 ord). Kun reglen, ingen overskrifter. Brug IKKE akronymer.`
+      : `Tekst at huske: "${text}"\n\nGenerer en dansk huskeregel (max 100 ord). Kun reglen, ingen overskrifter. Brug IKKE akronymer.`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',

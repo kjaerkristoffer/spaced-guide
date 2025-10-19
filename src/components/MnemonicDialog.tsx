@@ -117,7 +117,7 @@ export const MnemonicDialog = ({
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-1">
+          <div className="flex flex-col gap-3 pt-1">
             <Button
               onClick={handleGenerateMnemonic}
               disabled={isGenerating}
