@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Brain, ArrowLeft, Play, CheckCircle2, Loader2, Award } from "lucide-react";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
+import { getColorFromString, getIconForTopic } from "@/utils/colorUtils";
 
 interface Topic {
   title: string;
@@ -265,17 +266,16 @@ const LearningPath = () => {
                 className="p-4 rounded-2xl border bg-background hover:shadow-md transition-all"
               >
                 <div className="flex items-start gap-3">
-                  {/* Icon */}
-                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                    isCompleted 
-                      ? 'bg-gradient-to-br from-green-400 to-emerald-500' 
-                      : 'bg-gradient-to-br from-primary to-primary/70'
-                  }`}>
-                    {isCompleted ? (
-                      <CheckCircle2 className="w-7 h-7 text-white" />
-                    ) : (
-                      <Brain className="w-7 h-7 text-white" />
-                    )}
+                  {/* Icon with gradient */}
+                  <div 
+                    className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 text-2xl`}
+                    style={{ 
+                      background: isCompleted 
+                        ? 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' 
+                        : getColorFromString(topic.title)
+                    }}
+                  >
+                    {isCompleted ? '✓' : getIconForTopic(topic.title)}
                   </div>
 
                   {/* Content */}

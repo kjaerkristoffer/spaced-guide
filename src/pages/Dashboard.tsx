@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Brain, BookOpen, RotateCcw, Plus, LogOut, Loader2, CheckCircle2, Trash2, Trophy, Star, Flame, Target, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { getColorFromString, getIconForTopic } from "@/utils/colorUtils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -489,6 +490,8 @@ const Dashboard = () => {
               learningPaths.map((path) => {
                 const progress = pathProgress[path.id] || 0;
                 const isComplete = progress === 100;
+                const gradient = getColorFromString(path.subject);
+                const icon = getIconForTopic(path.subject);
                 
                 return (
                   <Card 
@@ -497,8 +500,11 @@ const Dashboard = () => {
                     onClick={() => navigate(`/path/${path.id}`)}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0">
-                        <BookOpen className="w-6 h-6 text-primary" />
+                      <div 
+                        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-2xl"
+                        style={{ background: gradient }}
+                      >
+                        {icon}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">
