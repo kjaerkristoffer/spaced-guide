@@ -285,6 +285,7 @@ const Learn = () => {
                 question={`Beskriv de tre vigtigste ting du har lært om "${topic}". Giv konkrete eksempler for hvert punkt.`}
                 topic={topic || ""}
                 onRate={handleRate}
+                isLastQuestion={true}
               />
             ) : currentCard ? (
             currentCard.card_type === "flashcard" ? (

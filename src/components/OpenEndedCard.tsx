@@ -9,9 +9,10 @@ interface OpenEndedCardProps {
   question: string;
   topic: string;
   onRate: (rating: number) => void;
+  isLastQuestion?: boolean;
 }
 
-const OpenEndedCard = ({ question, topic, onRate }: OpenEndedCardProps) => {
+const OpenEndedCard = ({ question, topic, onRate, isLastQuestion = false }: OpenEndedCardProps) => {
   const [answer, setAnswer] = useState("");
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluation, setEvaluation] = useState<{
@@ -59,6 +60,11 @@ const OpenEndedCard = ({ question, topic, onRate }: OpenEndedCardProps) => {
     onRate(rating);
   };
 
+  const handleSkip = () => {
+    // Skip with a neutral rating
+    onRate(3);
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       <Card className="shadow-[var(--shadow-elevated)]">
@@ -78,21 +84,33 @@ const OpenEndedCard = ({ question, topic, onRate }: OpenEndedCardProps) => {
             />
 
             {!evaluation && (
-              <Button
-                onClick={handleSubmit}
-                disabled={answer.trim().length < 50 || isEvaluating}
-                className="w-full"
-                size="lg"
-              >
-                {isEvaluating ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Evaluerer svar...
-                  </>
-                ) : (
-                  "Indsend svar"
+              <div className="flex gap-3">
+                <Button
+                  onClick={handleSubmit}
+                  disabled={answer.trim().length < 50 || isEvaluating}
+                  className="flex-1"
+                  size="lg"
+                >
+                  {isEvaluating ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Evaluerer svar...
+                    </>
+                  ) : (
+                    "Indsend svar"
+                  )}
+                </Button>
+                {isLastQuestion && (
+                  <Button
+                    onClick={handleSkip}
+                    disabled={isEvaluating}
+                    variant="outline"
+                    size="lg"
+                  >
+                    Spring dette over
+                  </Button>
                 )}
-              </Button>
+              </div>
             )}
 
             {evaluation && (
