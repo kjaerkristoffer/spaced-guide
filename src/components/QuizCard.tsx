@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle, Sparkles, Zap } from "lucide-react";
 
 interface QuizCardProps {
   question: string;
@@ -73,14 +73,47 @@ const QuizCard = ({ question, answer, options, onRate }: QuizCardProps) => {
 
           {showResult && (
             <>
-              <div className={`mt-6 p-4 rounded-lg ${isCorrect ? 'bg-success/10' : 'bg-destructive/10'}`}>
-                <p className={`font-medium ${isCorrect ? 'text-success' : 'text-destructive'}`}>
-                  {isCorrect ? "✓ Korrekt!" : "✗ Forkert"}
-                </p>
+              <div className={`mt-6 p-6 rounded-2xl border-2 animate-scale-in ${
+                isCorrect 
+                  ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-400 dark:from-green-950/30 dark:to-emerald-950/30' 
+                  : 'bg-gradient-to-br from-red-50 to-orange-50 border-red-400 dark:from-red-950/30 dark:to-orange-950/30'
+              }`}>
+                <div className="flex items-center gap-3 mb-3">
+                  {isCorrect ? (
+                    <>
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center animate-scale-in shadow-lg">
+                        <CheckCircle2 className="w-7 h-7 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-green-600 dark:text-green-400 flex items-center gap-2">
+                          Korrekt! 
+                          <Sparkles className="w-5 h-5 animate-pulse" />
+                        </p>
+                        <p className="text-sm text-green-700 dark:text-green-300">Flot klaret!</p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-400 to-orange-500 flex items-center justify-center animate-scale-in shadow-lg">
+                        <XCircle className="w-7 h-7 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-red-600 dark:text-red-400 flex items-center gap-2">
+                          Forkert
+                          <Zap className="w-5 h-5" />
+                        </p>
+                        <p className="text-sm text-red-700 dark:text-red-300">Næste gang går det bedre!</p>
+                      </div>
+                    </>
+                  )}
+                </div>
                 {!isCorrect && (
-                  <p className="text-sm mt-2 text-muted-foreground">
-                    Det korrekte svar er: <strong>{answer}</strong>
-                  </p>
+                  <div className="mt-4 p-3 bg-white/50 dark:bg-black/20 rounded-lg border border-red-200 dark:border-red-800">
+                    <p className="text-sm text-muted-foreground">
+                      Det korrekte svar er:
+                    </p>
+                    <p className="font-semibold text-base mt-1 text-foreground">{answer}</p>
+                  </div>
                 )}
               </div>
               <Button 
