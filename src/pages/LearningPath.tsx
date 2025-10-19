@@ -204,51 +204,55 @@ const LearningPath = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-3 sm:py-4">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => navigate("/dashboard")}
-            className="gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Tilbage til Dashboard</span>
-          </Button>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
-        <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
-            <div className="flex items-center gap-3 flex-1">
-              <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl" style={{ background: "var(--gradient-primary)" }}>
-                <Brain className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold truncate">{path?.subject}</h1>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  {path?.structure?.topics?.length || 0} emner
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 sm:text-right">
-              <Award className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
-              <div>
-                <span className="text-lg sm:text-2xl font-bold">
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate("/dashboard")}
+              className="gap-2 -ml-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm">Tilbage</span>
+            </Button>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10">
+                <Award className="w-4 h-4 text-primary" />
+                <span className="text-sm font-semibold">
                   {completedTopics.size}/{path?.structure?.topics?.length || 0}
                 </span>
-                <p className="text-xs sm:text-sm text-muted-foreground">Fuldført</p>
               </div>
             </div>
           </div>
-          <Progress 
-            value={(completedTopics.size / (path?.structure?.topics?.length || 1)) * 100} 
-            className="h-2"
-          />
         </div>
+      </header>
 
+      <main className="container mx-auto px-4 py-6 max-w-2xl">
+        {/* Title Card */}
+        <Card className="mb-6 p-5 rounded-2xl border-2 border-primary/20 bg-gradient-to-br from-background to-primary/5">
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-xl font-bold">{path?.subject}</h1>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                <Award className="w-5 h-5 text-yellow-700" />
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground">SCORE</span>
+              <span className="text-2xl font-bold text-primary">
+                {completedTopics.size}
+              </span>
+              <span className="text-muted-foreground">ud af {path?.structure?.topics?.length || 0}</span>
+            </div>
+          </div>
+        </Card>
+
+        {/* Topics List */}
         <div className="space-y-4">
           {path?.structure?.topics?.map((topic: Topic, index: number) => {
             const isCompleted = completedTopics.has(topic.title);
@@ -258,63 +262,100 @@ const LearningPath = () => {
             return (
               <Card 
                 key={index}
-                className={`p-4 sm:p-6 rounded-2xl border-0 bg-gradient-to-br from-background to-muted/20 shadow-[var(--shadow-card)] transition-all hover:shadow-[var(--shadow-elevated)] ${
-                  isCompleted ? 'ring-2 ring-success' : ''
-                }`}
+                className="p-4 rounded-2xl border bg-background hover:shadow-md transition-all"
               >
-                <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                  <div className="flex items-start gap-3 flex-1 min-w-0">
-                    <div className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full flex-shrink-0 ${
-                      isCompleted ? 'bg-success text-white' : 'bg-primary/10 text-primary'
-                    }`}>
-                      {isCompleted ? <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" /> : (
-                        <span className="text-sm sm:text-base font-bold">{topic.order}</span>
+                <div className="flex items-start gap-3">
+                  {/* Icon */}
+                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                    isCompleted 
+                      ? 'bg-gradient-to-br from-green-400 to-emerald-500' 
+                      : 'bg-gradient-to-br from-primary to-primary/70'
+                  }`}>
+                    {isCompleted ? (
+                      <CheckCircle2 className="w-7 h-7 text-white" />
+                    ) : (
+                      <Brain className="w-7 h-7 text-white" />
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="text-base font-semibold leading-tight">
+                        {topic.title}
+                      </h3>
+                      <Button
+                        onClick={() => startTopic(topic)}
+                        disabled={generatingCards === topic.title}
+                        size="sm"
+                        className={`flex-shrink-0 ${
+                          isCompleted 
+                            ? 'bg-background text-foreground border hover:bg-accent' 
+                            : isInProgress 
+                            ? 'bg-primary/10 text-primary hover:bg-primary/20' 
+                            : ''
+                        }`}
+                        variant={isCompleted || isInProgress ? "outline" : "default"}
+                      >
+                        {generatingCards === topic.title ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : isCompleted ? (
+                          <span className="text-xs font-medium px-2">GENNEMGÅ</span>
+                        ) : isInProgress ? (
+                          <span className="text-xs font-medium px-2">FORTSÆT</span>
+                        ) : (
+                          <span className="text-xs font-medium px-2">START</span>
+                        )}
+                      </Button>
+                    </div>
+
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+                      {isCompleted ? (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <span className="text-yellow-500">★</span>
+                            <span className="font-medium">Fuldført</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <div className="w-3 h-3 rounded-full bg-green-400" />
+                            <span className="font-medium">100%</span>
+                          </div>
+                        </>
+                      ) : isInProgress ? (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <span className="text-yellow-500">★</span>
+                            <span className="font-medium">{Math.round(progress)}%</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <div className="w-3 h-3 rounded-full bg-blue-400" />
+                            <span className="font-medium">I gang</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-1">
+                            <span className="text-gray-300">★</span>
+                            <span>0%</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <div className="w-3 h-3 rounded-full bg-gray-300" />
+                            <span>Ikke startet</span>
+                          </div>
+                        </>
                       )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-base sm:text-lg font-semibold mb-1 flex items-center gap-2 flex-wrap">
-                        <span className="break-words">{topic.title}</span>
-                        {isCompleted && (
-                          <span className="text-xs font-normal text-success whitespace-nowrap">✓ Fuldført</span>
-                        )}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-muted-foreground mb-2 line-clamp-2">
-                        {topic.description}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        ~{topic.estimatedMinutes} min
-                      </p>
-                      {progress > 0 && progress < 100 && (
-                        <div className="mt-3">
-                          <Progress value={progress} className="h-1.5" />
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {Math.round(progress)}% fuldført
-                          </p>
-                        </div>
-                      )}
+
+                    {/* Progress Bar */}
+                    <div className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className={`absolute inset-y-0 left-0 rounded-full transition-all duration-500 ${
+                          isCompleted ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gradient-to-r from-primary to-primary/70'
+                        }`}
+                        style={{ width: `${progress}%` }}
+                      />
                     </div>
                   </div>
-                  <Button
-                    onClick={() => startTopic(topic)}
-                    disabled={generatingCards === topic.title}
-                    className="w-full sm:w-auto whitespace-nowrap"
-                    variant={isInProgress ? "secondary" : "default"}
-                    size="lg"
-                  >
-                    {generatingCards === topic.title ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin flex-shrink-0" />
-                        <span className="truncate">Genererer...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-4 h-4 mr-2 flex-shrink-0" />
-                        <span className="truncate">
-                          {isCompleted ? 'Gennemgå' : isInProgress ? 'Fortsæt' : 'Start'}
-                        </span>
-                      </>
-                    )}
-                  </Button>
                 </div>
               </Card>
             );
