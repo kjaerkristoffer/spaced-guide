@@ -145,37 +145,38 @@ const CreatePath = () => {
                     <CardContent className="p-0">
                       {/* Header with gradient */}
                       <div 
-                        className="h-32 relative overflow-hidden rounded-t-lg"
+                        className="h-20 relative overflow-hidden rounded-t-lg"
                         style={{ background: topic.gradient }}
                       >
                         <div className="absolute inset-0 bg-black/10" />
-                        <div className="absolute bottom-4 left-4 right-4">
-                          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-2">
-                            <Icon className="w-7 h-7 text-white" />
+                        <div className="absolute bottom-3 left-3 right-3">
+                          <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                            <Icon className="w-5 h-5 text-white" />
                           </div>
                         </div>
                       </div>
                       
                       {/* Content */}
-                      <div className="p-4">
-                        <h3 className="font-bold text-lg mb-2">{topic.title}</h3>
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                      <div className="p-3">
+                        <h3 className="font-bold text-base mb-1.5">{topic.title}</h3>
+                        <p className="text-xs text-muted-foreground mb-2.5 line-clamp-2">
                           {topic.description}
                         </p>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs px-3 py-1 bg-primary/10 text-primary rounded-full font-medium">
+                          <span className="text-xs px-2.5 py-0.5 bg-primary/10 text-primary rounded-full font-medium">
                             {topic.level}
                           </span>
                           <Button 
                             size="sm" 
                             disabled={loading}
+                            className="h-8 text-xs px-3"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleCreatePath(topic);
                             }}
                           >
                             {loading ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
                             ) : (
                               "Start"
                             )}
