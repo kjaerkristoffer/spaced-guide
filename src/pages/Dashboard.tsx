@@ -414,7 +414,7 @@ const Dashboard = () => {
           </Card>
 
           <Card
-            className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 bg-gradient-to-br from-green-500/10 to-emerald-500/10"
+            className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active"
             onClick={() => navigate("/mnemonics")}
           >
             <div className="flex flex-col gap-2">
