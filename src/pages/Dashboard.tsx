@@ -361,8 +361,8 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Dark Header inspired by reference */}
-      <header className="bg-foreground text-background border-b border-border/10">
+      {/* Light Header (originally Dark) */}
+      <header className="bg-white text-black border-b border-gray-200">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center text-white font-bold text-lg">
@@ -373,12 +373,7 @@ const Dashboard = () => {
               <p className="text-xs opacity-70">Student</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleSignOut}
-            className="text-background hover:bg-background/10"
-          >
+          <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-black hover:bg-gray-100">
             <LogOut className="w-5 h-5" />
           </Button>
         </div>
