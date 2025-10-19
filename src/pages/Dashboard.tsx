@@ -364,15 +364,30 @@ const Dashboard = () => {
       {/* Light Header (originally Dark) */}
       <header className="bg-white text-black border-b border-gray-200">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center text-white font-bold text-lg">
-              {userStats?.level || "1"}
-            </div>
-            <div>
-              <h2 className="font-semibold text-sm">LearnSmart</h2>
-              <p className="text-xs opacity-70">Student</p>
-            </div>
-          </div>
+          <div className="flex items-center gap-4">
+        {/* The Icon (SVG: Graduation Cap/Knowledge) */}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-7 h-7 text-indigo-600" {/* Using a specific Tailwind color like indigo-600 for 'primary' */}
+        >
+          <path d="M4 19.5V15a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4.5M2 17h20" />
+          <path d="M12 2L2 7l10 5 10-5z" />
+          <path d="M2 7v10m20-10v10" />
+          <path d="M12 12v10" />
+        </svg>
+        {/* The Text Header */}
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-gray-900">
+            LearnSmart
+          </h1>
+        </div>
+      </div>
           <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-black hover:bg-gray-100">
             <LogOut className="w-5 h-5" />
           </Button>
