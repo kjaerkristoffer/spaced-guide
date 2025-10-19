@@ -65,27 +65,40 @@ serve(async (req) => {
       }
     }
 
-    // Build conversation messages with strict instructions about video URLs
+    // Build conversation messages with YouTube search capabilities
     const messages = [
       {
         role: "system",
-        content: `Du er en intelligent læringsvejleder med 50 års erfaring i pædagogik og didaktik. Din opgave er at hjælpe eleven med at lære på en engagerende og personlig måde.
+        content: `Du er en intelligent læringsvejleder med 50 års erfaring i pædagogik og didaktik og adgang til internetsøgning i realtid. Din opgave er at hjælpe eleven med at lære på en engagerende og personlig måde.
 
 Funktioner du kan tilbyde:
 1. **Forklare koncepter** på forskellige måder (analogier, eksempler, forenklinger)
-2. **YouTube video søgning** - foreslå SØGEORD til YouTube, ikke specifikke videoer
+2. **YouTube video anbefalinger** - find EKSISTERENDE YouTube-videoer via internetsøgning
 3. **Generere øvelseskort** - lav quiz, flashcards eller udfyld-hullet øvelser på emnet
 4. **Udforske relaterede emner** - hjælp eleven med at se sammenhænge
 5. **Personaliseret feedback** - tilpas svar til elevens niveau og læringsstil
 
-KRITISK VIGTIGT: Du kan IKKE søge efter eller finde specifikke YouTube videoer. I stedet skal du:
-- Foreslå SØGEORD som eleven kan bruge på YouTube
-- Beskriv hvilken TYPE video der ville være nyttig
-- Format søgeforslag sådan: [YOUTUBE_SEARCH: søgeord her]
+🎥 YOUTUBE VIDEO SØGNING - REGLER:
+- Du SKAL bruge reelle søgeresultater fra internettet (opfind aldrig videotitler, kanalnavne eller links)
+- Du SKAL inkludere den fulde YouTube-URL for hver video
+- Vis kun videoer der faktisk findes på YouTube
+- Giv altid mellem 3 og 5 relevante resultater
+- For hver video skal du inkludere:
+  * Videotitel
+  * Kanalnavn
+  * YouTube-link (fuld URL: https://www.youtube.com/watch?v=VIDEO_ID)
+  * En kort beskrivelse (1-2 sætninger) af hvorfor videoen matcher
 
-For eksempel:
-- [YOUTUBE_SEARCH: raketvidenskab for begyndere dansk]
-- [YOUTUBE_SEARCH: space travel explained simply]
+Format YouTube anbefalinger sådan:
+[YOUTUBE_VIDEO]
+Titel: [Video titel]
+Kanal: [Kanal navn]
+URL: [Fuld YouTube URL]
+Beskrivelse: [Hvorfor denne video er relevant]
+[/YOUTUBE_VIDEO]
+
+Hvis der ikke findes relevante resultater, skriv tydeligt:
+"Jeg kunne ikke finde eksisterende videoer der matcher præcist."
 
 Når du foreslår øvelseskort, format dem sådan:
 [PRACTICE: Beskrivelse af øvelsen]
@@ -149,14 +162,16 @@ ${contextInfo}`
     // Parse resources from response
     const resources: any[] = [];
     
-    // Extract YouTube search suggestions
-    const searchMatches = aiResponse.matchAll(/\[YOUTUBE_SEARCH: ([^\]]+)\]/g);
-    for (const match of searchMatches) {
-      const searchTerm = match[1].trim();
+    // Extract YouTube video recommendations
+    const videoPattern = /\[YOUTUBE_VIDEO\]\s*Titel:\s*([^\n]+)\s*Kanal:\s*([^\n]+)\s*URL:\s*(https:\/\/www\.youtube\.com\/watch\?v=[^\s]+)\s*Beskrivelse:\s*([^\[]+)\[\/YOUTUBE_VIDEO\]/g;
+    const videoMatches = aiResponse.matchAll(videoPattern);
+    for (const match of videoMatches) {
       resources.push({
         type: "youtube",
-        title: `Søg på YouTube: "${searchTerm}"`,
-        url: `https://www.youtube.com/results?search_query=${encodeURIComponent(searchTerm)}`
+        title: match[1].trim(),
+        channel: match[2].trim(),
+        url: match[3].trim(),
+        description: match[4].trim()
       });
     }
 
@@ -180,7 +195,7 @@ ${contextInfo}`
 
     // Clean response text from markup
     let cleanResponse = aiResponse
-      .replace(/\[YOUTUBE_SEARCH: [^\]]+\]/g, '')
+      .replace(/\[YOUTUBE_VIDEO\][\s\S]*?\[\/YOUTUBE_VIDEO\]/g, '')
       .replace(/\[PRACTICE: [^\]]+\]/g, '')
       .replace(/\[CONCEPT: [^\]]+\]/g, '')
       .trim();
