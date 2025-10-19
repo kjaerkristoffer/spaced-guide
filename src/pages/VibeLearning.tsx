@@ -232,22 +232,14 @@ const VibeLearning = () => {
                                   <div className="font-medium text-sm line-clamp-2 mb-1">
                                     {resource.title}
                                   </div>
-                                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
                                     {resource.channel && (
-                                      <span className="truncate">{resource.channel}</span>
-                                    )}
-                                    {resource.channel && resource.duration && (
-                                      <span>•</span>
+                                      <span className="truncate">Kanal: {resource.channel}</span>
                                     )}
                                     {resource.duration && (
-                                      <span className="flex-shrink-0">{resource.duration}</span>
+                                      <span className="flex-shrink-0">Tid: {resource.duration}</span>
                                     )}
                                   </div>
-                                  {resource.description && (
-                                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                      {resource.description}
-                                    </p>
-                                  )}
                                 </div>
                               </div>
                             </a>
