@@ -32,8 +32,11 @@ serve(async (req) => {
 
     // Get user from token
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(token);
+
     if (userError || !user) {
       throw new Error("Unauthorized");
     }
@@ -55,13 +58,10 @@ serve(async (req) => {
       }
     } else {
       // Get all user's learning paths for context
-      const { data: allPaths } = await supabase
-        .from("learning_paths")
-        .select("subject")
-        .eq("user_id", user.id);
+      const { data: allPaths } = await supabase.from("learning_paths").select("subject").eq("user_id", user.id);
 
       if (allPaths && allPaths.length > 0) {
-        contextInfo = `\n\nBrugerens læringsstier: ${allPaths.map(p => p.subject).join(", ")}`;
+        contextInfo = `\n\nBrugerens læringsstier: ${allPaths.map((p) => p.subject).join(", ")}`;
       }
     }
 
@@ -81,7 +81,7 @@ Funktioner du kan tilbyde:
 🎥 YOUTUBE VIDEO SØGNING - REGLER:
 - Du SKAL bruge reelle søgeresultater fra internettet (opfind aldrig videotitler, kanalnavne eller links)
 - Du SKAL inkludere den fulde YouTube-URL for hver video
-- Vis kun videoer der faktisk findes på YouTube
+- Vis kun videoer der faktisk findes på YouTube. Blev ved med at gennemgå links til videoer indtil du sikrer at det er et link som linker til en faktisk video på YouTube. Sikre at linket aldrig går til "Denne video er ikke tilgængelig" på YouTube.
 - Giv altid mellem 3 og 5 relevante resultater
 - For hver video skal du inkludere:
   * Videotitel
@@ -107,8 +107,8 @@ Når du forklarer begreber, format dem sådan:
 [CONCEPT: Titel på begrebet]
 
 Vær altid entusiastisk, støttende og tilpas dit sprog til dansk. Brug emojis hvor det giver mening for at gøre læringen sjov! 🚀
-${contextInfo}`
-      }
+${contextInfo}`,
+      },
     ];
 
     // Add conversation history
@@ -116,7 +116,7 @@ ${contextInfo}`
       conversationHistory.forEach((msg: any) => {
         messages.push({
           role: msg.role,
-          content: msg.content
+          content: msg.content,
         });
       });
     }
@@ -124,7 +124,7 @@ ${contextInfo}`
     // Add current message
     messages.push({
       role: "user",
-      content: message
+      content: message,
     });
 
     // Call Lovable AI
@@ -143,14 +143,14 @@ ${contextInfo}`
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI API error:", response.status, errorText);
-      
+
       if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
-      
+
       throw new Error(`AI API error: ${response.status}`);
     }
 
@@ -161,9 +161,10 @@ ${contextInfo}`
 
     // Parse resources from response
     const resources: any[] = [];
-    
+
     // Extract YouTube video recommendations
-    const videoPattern = /\[YOUTUBE_VIDEO\]\s*Titel:\s*([^\n]+)\s*Kanal:\s*([^\n]+)\s*URL:\s*(https:\/\/www\.youtube\.com\/watch\?v=[^\s]+)\s*Beskrivelse:\s*([^\[]+)\[\/YOUTUBE_VIDEO\]/g;
+    const videoPattern =
+      /\[YOUTUBE_VIDEO\]\s*Titel:\s*([^\n]+)\s*Kanal:\s*([^\n]+)\s*URL:\s*(https:\/\/www\.youtube\.com\/watch\?v=[^\s]+)\s*Beskrivelse:\s*([^\[]+)\[\/YOUTUBE_VIDEO\]/g;
     const videoMatches = aiResponse.matchAll(videoPattern);
     for (const match of videoMatches) {
       resources.push({
@@ -171,7 +172,7 @@ ${contextInfo}`
         title: match[1].trim(),
         channel: match[2].trim(),
         url: match[3].trim(),
-        description: match[4].trim()
+        description: match[4].trim(),
       });
     }
 
@@ -180,7 +181,7 @@ ${contextInfo}`
     for (const match of practiceMatches) {
       resources.push({
         type: "practice",
-        title: match[1].trim()
+        title: match[1].trim(),
       });
     }
 
@@ -189,35 +190,32 @@ ${contextInfo}`
     for (const match of conceptMatches) {
       resources.push({
         type: "concept",
-        title: match[1].trim()
+        title: match[1].trim(),
       });
     }
 
     // Clean response text from markup
     let cleanResponse = aiResponse
-      .replace(/\[YOUTUBE_VIDEO\][\s\S]*?\[\/YOUTUBE_VIDEO\]/g, '')
-      .replace(/\[PRACTICE: [^\]]+\]/g, '')
-      .replace(/\[CONCEPT: [^\]]+\]/g, '')
+      .replace(/\[YOUTUBE_VIDEO\][\s\S]*?\[\/YOUTUBE_VIDEO\]/g, "")
+      .replace(/\[PRACTICE: [^\]]+\]/g, "")
+      .replace(/\[CONCEPT: [^\]]+\]/g, "")
       .trim();
 
     return new Response(
       JSON.stringify({
         response: cleanResponse,
-        resources: resources
+        resources: resources,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error) {
     console.error("Error in vibe-learning:", error);
     const message = error instanceof Error ? error.message : "Unknown error";
-    return new Response(
-      JSON.stringify({ error: message }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
