@@ -388,7 +388,7 @@ const Dashboard = () => {
         {/* Stats Grid - Mobile First */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <Card
-            className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 bg-gradient-to-br from-blue-500/10 to-indigo-500/10"
+            className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active"
             onClick={() => navigate("/spaced-repetition")}
           >
             <div className="flex flex-col gap-2">
