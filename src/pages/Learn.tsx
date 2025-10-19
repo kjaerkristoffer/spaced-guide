@@ -280,13 +280,13 @@ const Learn = () => {
         </div>
 
         <div className="py-8">
-          {isOpenEndedQuestion ? (
-            <OpenEndedCard
-              question={`Forklar hvad du har lært om "${topic}". Hvad er de vigtigste punkter?`}
-              topic={topic || ""}
-              onRate={handleRate}
-            />
-          ) : currentCard ? (
+            {isOpenEndedQuestion ? (
+              <OpenEndedCard
+                question={`Beskriv de tre vigtigste ting du har lært om "${topic}". Giv konkrete eksempler for hvert punkt.`}
+                topic={topic || ""}
+                onRate={handleRate}
+              />
+            ) : currentCard ? (
             currentCard.card_type === "flashcard" ? (
               <FlashCard
                 key={currentCard.id}

@@ -40,14 +40,15 @@ Evaluer svaret på en skala fra 0-10 baseret på:
 - Relevans for spørgsmålet (10%)
 
 Giv konstruktiv feedback på dansk der:
-1. Fremhæver hvad der var godt
-2. Peger på eventuelle mangler
-3. Foreslår forbedringer
+1. Fremhæver hvad der var godt (max 2 sætninger)
+2. Peger på eventuelle mangler (max 2 sætninger)
+3. Foreslår forbedringer (max 2 sætninger)
 
-Returner dit svar i følgende JSON format:
+VIGTIGT: Returner UDELUKKENDE ren JSON uden markdown code blocks.
+Format:
 {
   "score": <tal mellem 0-10>,
-  "feedback": "<konstruktiv feedback på dansk>"
+  "feedback": "<kort, konstruktiv feedback på dansk>"
 }`
           },
           {
@@ -55,7 +56,6 @@ Returner dit svar i følgende JSON format:
             content: `Spørgsmål: ${question}\n\nStuderendes svar: ${answer}`
           }
         ],
-        temperature: 0.7,
       }),
     });
 
@@ -66,9 +66,12 @@ Returner dit svar i følgende JSON format:
     }
 
     const data = await response.json();
-    const content = data.choices[0].message.content;
+    let content = data.choices[0].message.content;
     
     console.log('AI response:', content);
+
+    // Strip markdown code blocks if present
+    content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
     // Parse the JSON response from AI
     const evaluation = JSON.parse(content);
