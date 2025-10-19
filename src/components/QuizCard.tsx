@@ -55,16 +55,16 @@ const QuizCard = ({ question, answer, options, onRate }: QuizCardProps) => {
                   key={index}
                   variant={variant}
                   size="lg"
-                  className="w-full justify-start text-left h-auto py-4"
+                  className="w-full justify-start text-left h-auto py-4 whitespace-normal break-words"
                   onClick={() => handleOptionClick(option)}
                   disabled={showResult}
                 >
-                  <span className="flex-1">{option}</span>
+                  <span className="flex-1 break-words">{option}</span>
                   {showResult && isAnswerOption && (
-                    <CheckCircle2 className="w-5 h-5 ml-2 text-white" />
+                    <CheckCircle2 className="w-5 h-5 ml-2 flex-shrink-0 text-white" />
                   )}
                   {showResult && isSelected && !isAnswerOption && (
-                    <XCircle className="w-5 h-5 ml-2" />
+                    <XCircle className="w-5 h-5 ml-2 flex-shrink-0" />
                   )}
                 </Button>
               );

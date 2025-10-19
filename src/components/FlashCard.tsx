@@ -40,12 +40,12 @@ const FlashCard = ({ question, answer, onRate }: FlashCardProps) => {
       </Card>
 
       {flipped && (
-        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="mt-6 flex flex-row gap-3 justify-center">
           <Button
             variant="outline"
             size="lg"
             onClick={() => onRate(1)}
-            className="flex-1 sm:max-w-[140px]"
+            className="flex-1 max-w-[140px]"
           >
             Svært
           </Button>
@@ -53,14 +53,14 @@ const FlashCard = ({ question, answer, onRate }: FlashCardProps) => {
             variant="outline"
             size="lg"
             onClick={() => onRate(3)}
-            className="flex-1 sm:max-w-[140px]"
+            className="flex-1 max-w-[140px]"
           >
             Godt
           </Button>
           <Button
             size="lg"
             onClick={() => onRate(5)}
-            className="flex-1 sm:max-w-[140px]"
+            className="flex-1 max-w-[140px]"
           >
             Nemt
           </Button>

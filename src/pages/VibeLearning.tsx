@@ -164,17 +164,27 @@ const VibeLearning = () => {
                   Stil spørgsmål, udforsk emner, få videoer og generer øvelseskort - alt sammen tilpasset din læring
                 </p>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
+              <div className="grid grid-cols-2 gap-3 max-w-2xl mx-auto">
                 {quickPrompts.map((prompt, idx) => (
-                  <Button
+                  <Card
                     key={idx}
-                    variant="outline"
-                    className="h-auto py-3 sm:py-4 justify-start gap-3 text-left whitespace-normal"
+                    className="p-4 cursor-pointer hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
                     onClick={() => setInput(prompt.text)}
                   >
-                    <prompt.icon className={`h-5 w-5 flex-shrink-0 ${prompt.color}`} />
-                    <span className="text-xs sm:text-sm break-words">{prompt.text}</span>
-                  </Button>
+                    <div className="flex flex-col items-center gap-3 text-center">
+                      <div className={`p-3 rounded-full bg-gradient-to-br ${
+                        idx === 0 ? 'from-purple-500/20 to-purple-600/20' :
+                        idx === 1 ? 'from-red-500/20 to-red-600/20' :
+                        idx === 2 ? 'from-blue-500/20 to-blue-600/20' :
+                        'from-yellow-500/20 to-yellow-600/20'
+                      }`}>
+                        <prompt.icon className={`h-6 w-6 ${prompt.color}`} />
+                      </div>
+                      <span className="text-xs sm:text-sm font-medium break-words leading-tight">
+                        {prompt.text}
+                      </span>
+                    </div>
+                  </Card>
                 ))}
               </div>
             </div>

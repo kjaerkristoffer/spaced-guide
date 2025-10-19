@@ -101,7 +101,7 @@ const FillBlankCard = ({ question, answer, options: providedOptions, onRate }: F
                   size="lg"
                   onClick={() => handleSelectOption(option)}
                   disabled={selectedAnswer !== null}
-                  className={`h-auto py-4 text-base font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg ${
+                  className={`h-auto py-4 text-base font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg whitespace-normal break-words ${
                     selectedAnswer === option
                       ? 'opacity-0 scale-50'
                       : 'opacity-100 scale-100'
@@ -137,20 +137,31 @@ const FillBlankCard = ({ question, answer, options: providedOptions, onRate }: F
               )}
             </div>
 
-            <div className="grid grid-cols-5 gap-2">
-              {[1, 2, 3, 4, 5].map((rating) => (
-                <Button
-                  key={rating}
-                  variant={rating <= (isCorrect ? 4 : 2) ? "default" : "outline"}
-                  onClick={() => handleRate(rating)}
-                >
-                  {rating}
-                </Button>
-              ))}
+            <div className="flex flex-row gap-3 justify-center">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => handleRate(1)}
+                className="flex-1 max-w-[140px]"
+              >
+                Svært
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => handleRate(3)}
+                className="flex-1 max-w-[140px]"
+              >
+                Godt
+              </Button>
+              <Button
+                size="lg"
+                onClick={() => handleRate(5)}
+                className="flex-1 max-w-[140px]"
+              >
+                Nemt
+              </Button>
             </div>
-            <p className="text-sm text-center text-muted-foreground">
-              Bedøm hvor godt du vidste dette (1 = vidste ikke, 5 = vidste perfekt)
-            </p>
           </div>
         )}
       </CardContent>
