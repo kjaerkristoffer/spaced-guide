@@ -123,7 +123,7 @@ const CreatePath = () => {
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Featured Topics Section */}
-        <div className="mb-12">
+        <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-bold mb-2">Udvalgte Emner</h1>
