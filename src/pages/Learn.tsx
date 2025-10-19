@@ -193,12 +193,22 @@ const Learn = () => {
   if (showReading && readingContent) {
     return (
       <div className="min-h-screen bg-background">
-        <header className="border-b border-border">
+        <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
           <div className="container mx-auto px-4 py-4">
-            <Button variant="ghost" onClick={() => navigate(`/path/${pathId}`)}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Afslut
-            </Button>
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => navigate(`/path/${pathId}`)}
+                className="hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-pink-500/20"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-6 w-6 text-primary" />
+                <h1 className="text-2xl font-bold">Læs</h1>
+              </div>
+            </div>
           </div>
         </header>
 
@@ -254,13 +264,23 @@ const Learn = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border">
+      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Button variant="ghost" onClick={() => navigate(`/path/${pathId}`)}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Afslut
-            </Button>
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => navigate(`/path/${pathId}`)}
+                className="hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-pink-500/20"
+              >
+                <ArrowLeft className="w-5 w-5" />
+              </Button>
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-6 w-6 text-primary" />
+                <h1 className="text-2xl font-bold">Lær</h1>
+              </div>
+            </div>
             <div className="text-sm font-medium">
               {currentIndex + 1} / {totalSteps}
             </div>
