@@ -126,19 +126,29 @@ const VibeLearning = () => {
       {/* Header */}
       <div className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => navigate('/dashboard')}
-              className="hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-pink-500/20"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-bold">Vibe Learning</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-6 w-6 text-primary" />
+                <h1 className="text-2xl font-bold">Vibe Learning</h1>
+              </div>
             </div>
+            <Select value={selectedPath} onValueChange={setSelectedPath}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Alle emner" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Alle emner</SelectItem>
+                {learningPaths.map(path => (
+                  <SelectItem key={path.id} value={path.id}>
+                    {path.subject}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -282,33 +292,18 @@ const VibeLearning = () => {
       {/* Input Area */}
       <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t">
         <div className="container mx-auto px-4 py-4 max-w-4xl">
-          <div className="space-y-3">
-            <Select value={selectedPath} onValueChange={setSelectedPath}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Alle emner" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Alle emner</SelectItem>
-                {learningPaths.map(path => (
-                  <SelectItem key={path.id} value={path.id}>
-                    {path.subject}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="flex gap-2">
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Stil et spørgsmål, bed om videoer, eller generer øvelseskort..."
-                className="flex-1"
-                disabled={isLoading}
-              />
-              <Button onClick={sendMessage} disabled={isLoading || !input.trim()}>
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
+          <div className="flex gap-2">
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Stil et spørgsmål, bed om videoer, eller generer øvelseskort..."
+              className="flex-1"
+              disabled={isLoading}
+            />
+            <Button onClick={sendMessage} disabled={isLoading || !input.trim()}>
+              <Send className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>

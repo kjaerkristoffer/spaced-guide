@@ -107,22 +107,17 @@ const CreatePath = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
+      <header className="border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => navigate("/dashboard")}
-              className="hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-pink-500/20"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-bold">Opret Læringssti</h1>
-            </div>
-          </div>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => navigate("/dashboard")}
+            className="gap-2 -ml-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm">Tilbage</span>
+          </Button>
         </div>
       </header>
 
