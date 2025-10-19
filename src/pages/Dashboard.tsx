@@ -432,7 +432,7 @@ const Dashboard = () => {
           >
             <div className="flex flex-col gap-2">
               <Sparkles className="w-6 h-6 text-pink-500" />
-              <div className="text-xs text-muted-foreground font-medium">Vibe AI</div>
+              <div className="text-xs text-muted-foreground font-medium">Vibe Learning</div>
             </div>
           </Card>
         </div>
@@ -472,7 +472,7 @@ const Dashboard = () => {
                   <CheckCircle2 className="w-4 h-4 text-white/70" />
                 </div>
                 <div>
-                  <div className="text-white font-semibold text-sm mb-0.5">Vibe AI</div>
+                  <div className="text-white font-semibold text-sm mb-0.5">Vibe Learning</div>
                   <div className="text-white/80 text-xs">Chat & lær</div>
                 </div>
               </div>
