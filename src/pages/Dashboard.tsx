@@ -361,11 +361,11 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Light Header (originally Dark) */}
-      <header className="bg-white text-black border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-        {/* The Icon (SVG: Graduation Cap/Knowledge) */}
+  {/* Light Header (originally Dark) */}
+  <header className="bg-white text-black border-b border-gray-200">
+    <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        {/* The Icon */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -374,8 +374,9 @@ const Dashboard = () => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="w-7 h-7 text-indigo-600" {/* Using a specific Tailwind color like indigo-600 for 'primary' */}
+          className="w-7 h-7 text-indigo-600"
         >
+          {/* Paths for the icon */}
           <path d="M4 19.5V15a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4.5M2 17h20" />
           <path d="M12 2L2 7l10 5 10-5z" />
           <path d="M2 7v10m20-10v10" />
@@ -388,11 +389,17 @@ const Dashboard = () => {
           </h1>
         </div>
       </div>
-          <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-black hover:bg-gray-100">
-            <LogOut className="w-5 h-5" />
-          </Button>
-        </div>
-      </header>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleSignOut}
+        className="text-black hover:bg-gray-100"
+      >
+        <LogOut className="w-5 h-5" />
+      </Button>
+    </div>
+  </header>
+</div>
 
       <main className="container mx-auto px-4 py-6 max-w-6xl">
         {/* Stats Grid - Mobile First */}
