@@ -3,10 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, ArrowLeft, Play, CheckCircle2, Loader2, Award } from "lucide-react";
+import { Brain, ArrowLeft, Play, CheckCircle2, Loader2, Award, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import { getColorFromString, getIconForTopic } from "@/utils/colorUtils";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Topic {
   title: string;
@@ -31,6 +35,10 @@ const LearningPath = () => {
   const [generatingCards, setGeneratingCards] = useState<string | null>(null);
   const [completedTopics, setCompletedTopics] = useState<Set<string>>(new Set());
   const [topicProgress, setTopicProgress] = useState<Record<string, number>>({});
+  const [showContinueDialog, setShowContinueDialog] = useState(false);
+  const [continuePrompt, setContinuePrompt] = useState("");
+  const [difficulty, setDifficulty] = useState<"easier" | "harder">("harder");
+  const [generatingPath, setGeneratingPath] = useState(false);
 
   useEffect(() => {
     fetchPath();
@@ -195,6 +203,70 @@ const LearningPath = () => {
       setGeneratingCards(null);
     }
   };
+
+  const handleContinueLearning = async () => {
+    if (!continuePrompt.trim()) {
+      toast.error("Beskriv venligst hvad du vil lære");
+      return;
+    }
+
+    setGeneratingPath(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Build context from all completed topics
+      const previousLearning = path!.structure.topics.map((topic: Topic) => 
+        `${topic.title}: ${topic.description}`
+      ).join("\n");
+
+      const difficultyPrompt = difficulty === "harder" 
+        ? "Gør det mere avanceret og sværere end det tidligere indhold."
+        : "Gør det mere grundlæggende og nemmere end det tidligere indhold.";
+
+      const fullPrompt = `Baseret på tidligere læring inden for ${path!.subject}:
+
+${previousLearning}
+
+Brugerens ønske: ${continuePrompt}
+
+${difficultyPrompt}
+
+Skab en ny læringssti der bygger videre på den tidligere viden og matcher brugerens ønsker.`;
+
+      const { data: functionData, error: functionError } = await supabase.functions.invoke(
+        "generate-learning-path",
+        { body: { subject: fullPrompt } }
+      );
+
+      if (functionError) throw functionError;
+
+      // Create new learning path
+      const { data: newPath, error: insertError } = await supabase
+        .from("learning_paths")
+        .insert({
+          user_id: user?.id,
+          subject: `${path!.subject} (Fortsættelse)`,
+          structure: functionData
+        })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      toast.success("Ny læringssti genereret!");
+      navigate(`/path/${newPath.id}`);
+    } catch (error: any) {
+      console.error("Error generating continuation:", error);
+      toast.error("Kunne ikke generere ny læringssti");
+    } finally {
+      setGeneratingPath(false);
+      setShowContinueDialog(false);
+      setContinuePrompt("");
+    }
+  };
+
+  const allTopicsCompleted = path?.structure?.topics?.length > 0 && 
+    completedTopics.size === path?.structure?.topics?.length;
 
   if (loading) {
     return (
@@ -361,7 +433,118 @@ const LearningPath = () => {
             );
           })}
         </div>
+
+        {/* Continue Learning Button */}
+        <Card className={`mt-8 p-6 rounded-2xl border-2 transition-all ${
+          allTopicsCompleted 
+            ? 'border-primary bg-gradient-to-br from-primary/10 to-primary/5 shadow-lg' 
+            : 'border-gray-200 bg-gray-50'
+        }`}>
+          <div className="flex flex-col items-center text-center gap-4">
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
+              allTopicsCompleted 
+                ? 'bg-gradient-to-r from-primary to-primary/70' 
+                : 'bg-gray-300'
+            }`}>
+              <Sparkles className={`w-8 h-8 ${allTopicsCompleted ? 'text-white' : 'text-gray-500'}`} />
+            </div>
+            <div>
+              <h3 className={`text-lg font-bold mb-2 ${allTopicsCompleted ? 'text-foreground' : 'text-muted-foreground'}`}>
+                {allTopicsCompleted ? 'Fantastisk arbejde! 🎉' : 'Gennemfør alle emner'}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {allTopicsCompleted 
+                  ? 'Du har gennemført alle emner! Klar til at lære mere?' 
+                  : 'Gennemfør alle emner for at fortsætte din læring'}
+              </p>
+            </div>
+            <Button
+              onClick={() => setShowContinueDialog(true)}
+              disabled={!allTopicsCompleted}
+              size="lg"
+              className={`gap-2 ${
+                allTopicsCompleted 
+                  ? 'bg-gradient-to-r from-primary to-primary/70 hover:from-primary/90 hover:to-primary/60' 
+                  : ''
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              Fortsæt læring
+            </Button>
+          </div>
+        </Card>
       </main>
+
+      {/* Continue Learning Dialog */}
+      <Dialog open={showContinueDialog} onOpenChange={setShowContinueDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-primary" />
+              Fortsæt din læring
+            </DialogTitle>
+            <DialogDescription>
+              Hvad vil du gerne lære næste gang inden for {path?.subject}?
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="continue-prompt">Beskriv hvad du vil lære</Label>
+              <Textarea
+                id="continue-prompt"
+                placeholder="F.eks. jeg vil gerne lære mere om avancerede teknikker..."
+                value={continuePrompt}
+                onChange={(e) => setContinuePrompt(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="difficulty">Sværhedsgrad</Label>
+              <Select value={difficulty} onValueChange={(value: "easier" | "harder") => setDifficulty(value)}>
+                <SelectTrigger id="difficulty">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="easier">Nemmere end før</SelectItem>
+                  <SelectItem value="harder">Sværere end før</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowContinueDialog(false);
+                setContinuePrompt("");
+              }}
+              disabled={generatingPath}
+            >
+              Annuller
+            </Button>
+            <Button
+              onClick={handleContinueLearning}
+              disabled={generatingPath || !continuePrompt.trim()}
+              className="gap-2"
+            >
+              {generatingPath ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Genererer...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Generer ny læringssti
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
