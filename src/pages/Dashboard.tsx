@@ -421,7 +421,7 @@ const Dashboard = () => {
 
             <Card 
               className="min-w-[160px] p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95 flex-shrink-0"
-              style={{ background: "var(--gradient-green)" }}
+              style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 100%)" }}
               onClick={() => navigate("/mnemonics")}
             >
               <div className="flex flex-col gap-3">
@@ -543,14 +543,12 @@ const Dashboard = () => {
                         <p className="text-xs text-muted-foreground mb-2">
                           {path.structure?.topics?.length || 0} emner
                         </p>
-                        {progress > 0 && (
-                          <div className="space-y-1">
-                            <div className="flex items-center justify-between text-xs text-muted-foreground">
-                              <span>{Math.round(progress)}% fuldført</span>
-                            </div>
-                            <Progress value={progress} className="h-1.5" />
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>{Math.round(progress)}% fuldført</span>
                           </div>
-                        )}
+                          <Progress value={progress} className="h-1.5" />
+                        </div>
                       </div>
                     </div>
                   </Card>

@@ -70,8 +70,8 @@ export const ReadingContent = ({ content, learningPathId }: ReadingContentProps)
 
       {showHighlightButton && (
         <Button
-          size="sm"
-          className="fixed z-50 animate-scale-in shadow-lg"
+          size="lg"
+          className="fixed z-50 animate-scale-in shadow-2xl bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 border-2 border-white/20"
           style={{
             left: `${buttonPosition.x}px`,
             top: `${buttonPosition.y}px`,
@@ -79,7 +79,7 @@ export const ReadingContent = ({ content, learningPathId }: ReadingContentProps)
           }}
           onClick={handleCreateMnemonic}
         >
-          <Lightbulb className="w-4 h-4 mr-2" />
+          <Lightbulb className="w-5 h-5 mr-2" />
           Lav Husketeknik
         </Button>
       )}
