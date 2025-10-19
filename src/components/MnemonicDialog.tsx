@@ -88,52 +88,52 @@ export const MnemonicDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px] bg-gradient-to-br from-background to-muted/30 border-2 border-primary/20">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+      <DialogContent className="max-w-[95vw] sm:max-w-[550px] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-background to-muted/30 border-2 border-primary/20 p-4 sm:p-6">
+        <DialogHeader className="space-y-2 pb-2">
+          <DialogTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent pr-8">
             Lav Husketeknik
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-5">
-          <div className="bg-muted/50 p-4 rounded-xl border border-primary/10">
-            <p className="text-xs text-muted-foreground mb-1 font-medium">Valgt tekst:</p>
-            <p className="text-sm font-medium leading-relaxed">
+        <div className="space-y-4">
+          <div className="bg-muted/50 p-3 sm:p-4 rounded-xl border border-primary/10">
+            <p className="text-xs text-muted-foreground mb-1.5 font-medium">Valgt tekst:</p>
+            <p className="text-sm font-medium leading-relaxed break-words">
               "{highlightedText}"
             </p>
           </div>
 
           <div>
-            <label className="text-sm font-semibold mb-3 block flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary" />
-              Din huskeregel:
+            <label className="text-sm font-semibold mb-2 block flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary flex-shrink-0" />
+              <span>Din huskeregel:</span>
             </label>
             <Textarea
               value={mnemonicText}
               onChange={(e) => setMnemonicText(e.target.value)}
               placeholder="Skriv din egen huskeregel eller klik 'Giv Husketeknik' for AI-forslag"
-              rows={5}
-              className="resize-none border-2 focus:border-primary transition-colors"
+              rows={4}
+              className="resize-none border-2 focus:border-primary transition-colors text-sm"
             />
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-1">
             <Button
               onClick={handleGenerateMnemonic}
               disabled={isGenerating}
               variant="outline"
               size="lg"
-              className="flex-1 border-2 hover:border-primary hover:bg-primary/5"
+              className="flex-1 border-2 hover:border-primary hover:bg-primary/5 text-sm sm:text-base"
             >
               {isGenerating ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Genererer...
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin flex-shrink-0" />
+                  <span className="truncate">Genererer...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Giv Husketeknik
+                  <Sparkles className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">Giv Husketeknik</span>
                 </>
               )}
             </Button>
@@ -142,15 +142,15 @@ export const MnemonicDialog = ({
               onClick={handleSave}
               disabled={isSaving || !mnemonicText.trim()}
               size="lg"
-              className="flex-1 bg-gradient-to-r from-primary to-primary-glow hover:opacity-90"
+              className="flex-1 bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 text-sm sm:text-base"
             >
               {isSaving ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Gemmer...
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin flex-shrink-0" />
+                  <span className="truncate">Gemmer...</span>
                 </>
               ) : (
-                "Gem Huskeregel"
+                <span className="truncate">Gem Huskeregel</span>
               )}
             </Button>
           </div>
