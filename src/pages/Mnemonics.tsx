@@ -90,7 +90,7 @@ const Mnemonics = () => {
             <p className="text-muted-foreground">Indlæser huskeregler...</p>
           </div>
         ) : mnemonics.length === 0 ? (
-          <Card className="shadow-[var(--shadow-elevated)]">
+          <Card className="shadow-lg">
             <CardContent className="py-12 text-center">
               <Brain className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
               <h3 className="text-xl font-semibold mb-2">Ingen huskeregler endnu</h3>
@@ -102,7 +102,7 @@ const Mnemonics = () => {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {mnemonics.map((mnemonic) => (
-              <Card key={mnemonic.id} className="shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-hover)] transition-all">
+              <Card key={mnemonic.id} className="shadow-lg hover:shadow-xl transition-all">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-lg font-semibold line-clamp-2">

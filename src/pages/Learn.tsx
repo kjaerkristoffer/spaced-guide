@@ -204,7 +204,7 @@ const Learn = () => {
         </header>
 
         <div className="container max-w-3xl mx-auto px-4 py-8">
-          <Card className="shadow-[var(--shadow-elevated)]">
+          <Card className="shadow-xl">
             <CardHeader>
               <div className="flex items-center gap-3 mb-2">
                 <BookOpen className="w-6 h-6 text-primary" />

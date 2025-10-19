@@ -33,7 +33,7 @@ const QuizCard = ({ question, answer, options, onRate, cardId, learningPathId }:
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Card className="shadow-[var(--shadow-elevated)] relative">
+      <Card className="shadow-xl relative">
         <Button
           variant="ghost"
           size="icon"

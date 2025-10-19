@@ -19,7 +19,7 @@ const FlashCard = ({ question, answer, onRate, cardId, learningPathId }: FlashCa
   return (
     <div className="max-w-2xl mx-auto">
       <Card 
-        className="cursor-pointer min-h-[300px] shadow-[var(--shadow-elevated)] transition-all hover:shadow-[var(--shadow-card)] relative"
+        className="cursor-pointer min-h-[300px] shadow-xl transition-all hover:shadow-2xl relative"
         onClick={() => setFlipped(!flipped)}
       >
         <Button

@@ -305,7 +305,7 @@ Skab en ny læringssti der bygger videre på den tidligere viden og matcher brug
 
       <main className="container mx-auto px-4 py-6 max-w-2xl">
         {/* Title Card */}
-        <Card className="mb-6 p-5 rounded-2xl border-2 border-primary/20 bg-gradient-to-br from-background to-primary/5">
+        <Card className="mb-6 p-5 rounded-2xl border-2 border-primary/20 bg-gradient-to-br from-background to-primary/5 shadow-lg">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-xl font-bold">{path?.subject}</h1>
             <div className="flex items-center gap-2">
@@ -335,7 +335,7 @@ Skab en ny læringssti der bygger videre på den tidligere viden og matcher brug
             return (
               <Card 
                 key={index}
-                className="p-4 rounded-2xl border bg-background hover:shadow-md transition-all"
+                className="p-4 rounded-2xl border bg-background shadow-lg hover:shadow-xl transition-all"
               >
                 <div className="flex items-start gap-3">
                   {/* Icon with gradient */}

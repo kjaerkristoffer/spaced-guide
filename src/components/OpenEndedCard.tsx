@@ -70,7 +70,7 @@ const OpenEndedCard = ({ question, topic, onRate, isLastQuestion = false, learni
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Card className="shadow-[var(--shadow-elevated)] relative">
+      <Card className="shadow-xl relative">
         <Button
           variant="ghost"
           size="icon"

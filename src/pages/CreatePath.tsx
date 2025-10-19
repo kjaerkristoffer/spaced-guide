@@ -139,7 +139,7 @@ const CreatePath = () => {
                 return (
                   <Card
                     key={index}
-                    className="flex-shrink-0 w-[280px] snap-start cursor-pointer hover:shadow-lg transition-all border-2 hover:border-primary/50"
+                    className="flex-shrink-0 w-[280px] snap-start cursor-pointer shadow-lg hover:shadow-xl transition-all border-2 hover:border-primary/50"
                     onClick={() => handleCreatePath(topic)}
                   >
                     <CardContent className="p-0">

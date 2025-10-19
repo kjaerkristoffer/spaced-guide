@@ -315,7 +315,7 @@ const Dashboard = () => {
         {/* Stats Grid - Mobile First */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <Card 
-            className="p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95"
+            className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95"
             onClick={() => navigate("/spaced-repetition")}
           >
             <div className="flex flex-col gap-2">
@@ -325,7 +325,7 @@ const Dashboard = () => {
           </Card>
 
           <Card 
-            className="p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95"
+            className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95"
             onClick={() => navigate("/missions")}
           >
             <div className="flex flex-col gap-2">
@@ -338,7 +338,7 @@ const Dashboard = () => {
           </Card>
 
           <Card 
-            className="p-4 rounded-2xl border-0 shadow-[var(--shadow-card)]"
+            className="p-4 rounded-2xl border-0 shadow-lg"
           >
             <div className="flex flex-col gap-2">
               <div className="text-2xl font-bold flex items-center gap-1">
@@ -350,7 +350,7 @@ const Dashboard = () => {
           </Card>
 
           <Card 
-            className="p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95 bg-gradient-to-br from-pink-500/10 to-purple-500/10"
+            className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 bg-gradient-to-br from-pink-500/10 to-purple-500/10"
             onClick={() => navigate("/vibe-learning")}
           >
             <div className="flex flex-col gap-2">
@@ -369,7 +369,7 @@ const Dashboard = () => {
 
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 hide-scrollbar">
             <Card 
-              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95 flex-shrink-0"
+              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 flex-shrink-0"
               style={{ background: "var(--gradient-orange)" }}
               onClick={() => navigate("/spaced-repetition")}
             >
@@ -386,7 +386,7 @@ const Dashboard = () => {
             </Card>
 
             <Card 
-              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95 flex-shrink-0"
+              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 flex-shrink-0"
               style={{ background: "var(--gradient-blue)" }}
               onClick={() => navigate("/vibe-learning")}
             >
@@ -403,7 +403,7 @@ const Dashboard = () => {
             </Card>
 
             <Card 
-              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95 flex-shrink-0"
+              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 flex-shrink-0"
               style={{ background: "var(--gradient-primary)" }}
               onClick={() => navigate("/missions")}
             >
@@ -420,7 +420,7 @@ const Dashboard = () => {
             </Card>
 
             <Card 
-              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-95 flex-shrink-0"
+              className="min-w-[160px] p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-95 flex-shrink-0"
               style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 100%)" }}
               onClick={() => navigate("/mnemonics")}
             >
@@ -495,7 +495,7 @@ const Dashboard = () => {
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
               </div>
             ) : learningPaths.length === 0 ? (
-              <Card className="p-12 text-center rounded-2xl border-0 shadow-[var(--shadow-card)]">
+              <Card className="p-12 text-center rounded-2xl border-0 shadow-lg">
                 <Brain className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
                 <h3 className="text-xl font-semibold mb-2">Ingen læringsstier endnu</h3>
                 <p className="text-muted-foreground mb-4">
@@ -512,7 +512,7 @@ const Dashboard = () => {
                 return (
                   <Card 
                     key={path.id} 
-                    className="p-4 rounded-2xl border-0 shadow-[var(--shadow-card)] cursor-pointer transition-all hover:shadow-[var(--shadow-elevated)] active:scale-[0.98]"
+                    className="p-4 rounded-2xl border-0 shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-[0.98]"
                     onClick={() => navigate(`/path/${path.id}`)}
                   >
                     <div className="flex items-start gap-3">

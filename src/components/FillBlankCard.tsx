@@ -83,7 +83,7 @@ const FillBlankCard = ({ question, answer, options: providedOptions, onRate, car
   };
 
   return (
-    <Card className="max-w-2xl mx-auto shadow-[var(--shadow-elevated)] relative">
+    <Card className="max-w-2xl mx-auto shadow-xl relative">
       <Button
         variant="ghost"
         size="icon"
