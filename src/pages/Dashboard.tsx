@@ -426,16 +426,15 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold">Læringsstier</h2>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button 
-                  size="sm"
-                  className="gap-2"
-                  style={{ background: "var(--gradient-primary)" }}
-                >
-                  <Plus className="w-4 h-4" />
-                  Ny
-                </Button>
-              </DialogTrigger>
+              <Button 
+                onClick={() => navigate("/create")}
+                size="sm"
+                className="gap-2"
+                style={{ background: "var(--gradient-primary)" }}
+              >
+                <Plus className="w-4 h-4" />
+                Ny
+              </Button>
               <DialogContent>
               <DialogHeader>
                 <DialogTitle>Opret Ny Læringssti</DialogTitle>

@@ -12,6 +12,7 @@ import Review from "./pages/Review";
 import SpacedRepetition from "./pages/SpacedRepetition";
 import Missions from "./pages/Missions";
 import VibeLearning from "./pages/VibeLearning";
+import CreatePath from "./pages/CreatePath";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/create" element={<CreatePath />} />
           <Route path="/path/:id" element={<LearningPath />} />
           <Route path="/learn" element={<Learn />} />
           <Route path="/review" element={<Review />} />
