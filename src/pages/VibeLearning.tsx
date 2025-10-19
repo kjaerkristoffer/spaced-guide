@@ -16,6 +16,9 @@ interface Message {
     type: 'youtube' | 'practice' | 'concept';
     title: string;
     url?: string;
+    channel?: string;
+    duration?: string;
+    description?: string;
     data?: any;
   }[];
 }
@@ -221,10 +224,32 @@ const VibeLearning = () => {
                               href={resource.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-3 text-sm"
+                              className="block"
                             >
-                              <Youtube className="h-5 w-5 text-red-500" />
-                              <span className="font-medium">{resource.title}</span>
+                              <div className="flex items-start gap-3">
+                                <Youtube className="h-5 w-5 text-red-500 mt-1 flex-shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                  <div className="font-medium text-sm line-clamp-2 mb-1">
+                                    {resource.title}
+                                  </div>
+                                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                    {resource.channel && (
+                                      <span className="truncate">{resource.channel}</span>
+                                    )}
+                                    {resource.channel && resource.duration && (
+                                      <span>•</span>
+                                    )}
+                                    {resource.duration && (
+                                      <span className="flex-shrink-0">{resource.duration}</span>
+                                    )}
+                                  </div>
+                                  {resource.description && (
+                                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                      {resource.description}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
                             </a>
                           )}
                           {resource.type === 'practice' && (

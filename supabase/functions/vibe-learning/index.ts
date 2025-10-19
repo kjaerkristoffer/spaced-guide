@@ -162,7 +162,7 @@ ${contextInfo}`,
       console.log("Fetching YouTube videos for query:", searchQuery);
       
       try {
-        // Call YouTube Data API v3
+        // Call YouTube Data API v3 - Search
         const youtubeResponse = await fetch(
           `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(searchQuery)}&key=${YOUTUBE_API_KEY}&relevanceLanguage=da`
         );
@@ -171,16 +171,47 @@ ${contextInfo}`,
           const youtubeData = await youtubeResponse.json();
           
           if (youtubeData.items && youtubeData.items.length > 0) {
-            for (const item of youtubeData.items) {
-              resources.push({
-                type: "youtube",
-                title: item.snippet.title,
-                channel: item.snippet.channelTitle,
-                url: `https://www.youtube.com/watch?v=${item.id.videoId}`,
-                description: item.snippet.description.substring(0, 150) + "...",
-              });
+            // Get video IDs to fetch details
+            const videoIds = youtubeData.items.map((item: any) => item.id.videoId).join(',');
+            
+            // Fetch video details (duration, channel info)
+            const detailsResponse = await fetch(
+              `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoIds}&key=${YOUTUBE_API_KEY}`
+            );
+            
+            if (detailsResponse.ok) {
+              const detailsData = await detailsResponse.json();
+              
+              // Helper function to parse ISO 8601 duration
+              const parseDuration = (duration: string): string => {
+                const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+                if (!match) return "Ukendt";
+                
+                const hours = parseInt(match[1] || "0");
+                const minutes = parseInt(match[2] || "0");
+                const seconds = parseInt(match[3] || "0");
+                
+                if (hours > 0) {
+                  return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                } else {
+                  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+              };
+              
+              for (const video of detailsData.items) {
+                const duration = parseDuration(video.contentDetails.duration);
+                
+                resources.push({
+                  type: "youtube",
+                  title: video.snippet.title,
+                  channel: video.snippet.channelTitle,
+                  url: `https://www.youtube.com/watch?v=${video.id}`,
+                  description: video.snippet.description.substring(0, 150) + "...",
+                  duration: duration,
+                });
+              }
+              console.log(`Found ${detailsData.items.length} YouTube videos with details`);
             }
-            console.log(`Found ${youtubeData.items.length} YouTube videos`);
           }
         } else {
           console.error("YouTube API error:", await youtubeResponse.text());
