@@ -206,15 +206,16 @@ ${contextInfo}`,
                   title: video.snippet.title,
                   channel: video.snippet.channelTitle,
                   url: `https://www.youtube.com/watch?v=${video.id}`,
-                  description: video.snippet.description.substring(0, 150) + "...",
                   duration: duration,
                 });
               }
               console.log(`Found ${detailsData.items.length} YouTube videos with details`);
+            } else {
+              console.error("YouTube API details error:", await detailsResponse.text());
             }
           }
         } else {
-          console.error("YouTube API error:", await youtubeResponse.text());
+          console.error("YouTube API search error:", await youtubeResponse.text());
         }
       } catch (error) {
         console.error("Error fetching YouTube videos:", error);
